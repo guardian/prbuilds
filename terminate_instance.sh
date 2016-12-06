@@ -12,6 +12,7 @@ function killInstance() {
     read yesno
 
     if [[ "$yesno" == "y" ]]; then
+        aws ec2 delete-tags --resources $stripped --tags Key=Lifetime,Value=Temporary --region eu-west-1 --profile frontend
         aws ec2 terminate-instances --instance-ids $stripped --region eu-west-1 --profile frontend
     fi
 

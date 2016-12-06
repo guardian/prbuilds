@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  environment:
+    AWS_PROFILE: frontend
+  tasks:
+    - name: do we have the env?
+      shell: echo $AWS_PROFILE
+    - name: launch an instance
+      ec2:
+        key_name: matthew-walls
+        instance_type: t2.medium
+        image: ami-d75f22a4
+        wait: yes
+        count: 1
+        vpc_subnet_id: subnet-c682e7b0
+        assign_public_ip: yes
+        group_id: sg-d7827eb1
+        region: eu-west-1
+        instance_tags:
+           Lifetime: Temporary

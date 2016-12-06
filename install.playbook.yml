@@ -23,7 +23,7 @@
       shell: . ~/.nvm/nvm.sh; nvm install
       args:
         chdir: ~/frontend
-        executable: /bin/bash    
+        executable: /bin/bash
     - name: run setup.py
       command: ~/frontend/setup.sh
       args:
@@ -33,7 +33,7 @@
       args:
         chdir: ~/frontend
     - name: run the article project
-      command: screen -dm ~/frontend/sbt "project article" "run"
+      command: screen -d -m ~/frontend/sbt "project article" "run"
       args:
         chdir: ~/frontend
-    
+
