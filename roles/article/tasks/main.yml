@@ -1,0 +1,39 @@
+---
+- name: clone the repo
+  git:
+    repo: 'https://github.com/guardian/frontend.git'
+    dest: ~/frontend
+    version: stubbed-runtime
+
+- name: set to devinfra
+  lineinfile:
+    dest: /etc/gu/install_vars
+    regexp: '^STAGE='
+    line: 'STAGE=DEVINFRA'
+    create: yes
+  become: true
+
+- name: preinstall nvm
+  shell: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
+
+- name: preinstall nvm part II
+  shell: . ~/.nvm/nvm.sh; nvm install
+  args:
+    chdir: ~/frontend
+    executable: /bin/bash
+
+- name: run setup.py
+  command: ~/frontend/setup.sh
+  args:
+    chdir: ~/frontend/
+
+- name: sbt compile
+  command: ~/frontend/sbt "project article" "compile"
+  args:
+    chdir: ~/frontend
+
+- name: run the article project
+  command: screen -d -m ~/frontend/sbt "project article" "run"
+  args:
+    chdir: ~/frontend
+

@@ -1,0 +1,6 @@
+---
+- name: mock stuff
+  remote_user: ubuntu
+  tasks:
+    - name: who am I ???
+      command: hostname

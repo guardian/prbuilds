@@ -3,8 +3,7 @@
   environment:
     AWS_PROFILE: frontend
   tasks:
-    - name: do we have the env?
-      shell: echo $AWS_PROFILE
+    
     - name: launch an instance
       ec2:
         key_name: matthew-walls
@@ -18,3 +17,25 @@
         region: eu-west-1
         instance_tags:
            Lifetime: Temporary
+      register: ec2
+    
+    - name: wait for ssh to become available
+      wait_for:
+        host: "{{ item.public_dns_name }}"
+        port: 22
+        delay: 60
+        timeout: 320
+        state: started
+      with_items: "{{ ec2.instances }}"
+
+    - name: add the host
+      add_host:
+        hostname: "{{ item.public_ip }}"
+        groupname: pickles
+      with_items: "{{ ec2.instances }}"
+
+- hosts: pickles
+  remote_user: ubuntu    
+  roles:
+    - article
+    
