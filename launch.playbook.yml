@@ -2,6 +2,7 @@
 - hosts: localhost
   environment:
     AWS_PROFILE: frontend
+    ANSIBLE_HOST_KEY_CHECKING: False
   tasks:
     
     - name: launch an instance

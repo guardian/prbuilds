@@ -8,6 +8,11 @@ function killInstance() {
 
     stripped=$(echo $instance | sed 's/"//g')
 
+    if [[ "$stripped" == "null" ]]; then
+        echo "No instances found with tag Lifetime:Temporary"
+        exit 1
+    fi
+
     echo "Killing $stripped. Proceed? [y/n]"
     read yesno
 
