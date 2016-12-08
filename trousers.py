@@ -1,48 +1,82 @@
+#!/usr/bin/env python
 
-import boto3, time, ansible, subprocess, json
+import boto3, time, ansible, subprocess, json, requests, os
+from requests.auth import HTTPBasicAuth
 
 QUEUE_NAME = 'mjwtest';
+GH_NAME = os.getenv('GH_NAME', '')
+GH_TOKEN = os.getenv('GH_TOKEN', '')
 
-def listen_and_block(queue):
+class Trousers:
 
-    """ Wait for an SQS message and then return it """
+    def __init__(self):
+
+        """ constructor """
+
+        self.subprocess = subprocess
+        self.requests = requests
+        
+    def start(self, queue):
+
+        """ busy waiting loop """
+        
+        while True:
+            msg = self.receive(queue, 2)
+            branch = self.extract_branch(msg.body)
+            self.build(branch)
+            msg.delete()
     
-    while True:
-        for message in queue.receive_messages():
-            return message
-        time.sleep(5)
+    def receive(self, queue, interval=5):
 
-def build(branch="master"):
-
-    """ Run the build script """
-
-    print "Running ansible play for branch: %s" % branch
+        """ Wait for an SQS message and then return it """
     
-    subprocess.call([
-        "ansible-playbook",
-        "build.playbook.yml"
-    ], stdout=open("log", "w"))
+        while True:
+            for message in queue.receive_messages():
+                return message
+            time.sleep(interval)
 
-    print "Play finished"
+    def build(self, branch="master"):
 
+        """ Run the build script """
+
+        print "Running ansible play for branch: %s" % branch
+
+        self.subprocess.call([
+            "ansible-playbook",
+            "build.playbook.yml",
+            "--extra-vars",
+            "branch=%s" % branch,
+            "-v"
+        ])
+
+    def github_comment(self, url, body):
+
+        self.requests.post(
+            url,
+            data = { 'body' : body },
+            auth = HTTPBasicAuth(
+                GH_NAME,
+                GH_TOKEN
+            )
+        )
+
+    def extract_branch(self, data):
+        obj = json.loads(data)
+        return obj["pull_request"]["head"]["ref"]
+    
 if __name__ == '__main__':
 
-    session = boto3.Session(
+    sqs = boto3.Session(
         profile_name='frontend',
         region_name='eu-west-1'
-    )
+    ).resource('sqs')
     
-    sqs = session.resource('sqs')
-    
-    queue = sqs.get_queue_by_name(
-        QueueName=QUEUE_NAME
-    )
+    trousers = Trousers()
 
-    print "Waiting for messages"
+    print "Starting"
     
-    while True:
-        msg = listen_and_block(queue)
-        build(json.loads(msg.body)["branch"])
-        msg.delete()
-        
-
+    trousers.start(
+        sqs.get_queue_by_name(
+            QueueName=QUEUE_NAME
+        )   
+    )
