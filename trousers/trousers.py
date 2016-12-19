@@ -3,9 +3,11 @@
 import boto3, time, ansible, subprocess, json, requests, os
 from requests.auth import HTTPBasicAuth
 
-QUEUE_NAME = 'mjwtest';
+QUEUE_NAME = 'trousers_in';
 GH_NAME = os.getenv('GH_NAME', '')
 GH_TOKEN = os.getenv('GH_TOKEN', '')
+AWS_USER = os.getenv('AWS_USER', '') 
+AWS_KEY = os.getenv('AWS_KEY', '')
 
 class Trousers:
 
@@ -23,7 +25,9 @@ class Trousers:
         while True:
             msg = self.receive(queue, 2)
             branch = self.extract_branch(msg.body)
+            prurl = self.extract_comment_url(msg.body)
             self.build(branch)
+            self.github_comment(prurl, "Build complete")
             msg.delete()
     
     def receive(self, queue, interval=5):
@@ -51,24 +55,29 @@ class Trousers:
 
     def github_comment(self, url, body):
 
-        self.requests.post(
+        res = self.requests.post(
             url,
-            data = { 'body' : body },
+            data = '{ "body" : "%s" }' % body,
             auth = HTTPBasicAuth(
                 GH_NAME,
                 GH_TOKEN
             )
         )
+        
+    def extract_comment_url(self, data):
+        obj = json.loads(data)
+        return obj["pull_request"]["comments_url"]
 
     def extract_branch(self, data):
         obj = json.loads(data)
         return obj["pull_request"]["head"]["ref"]
-    
+
 if __name__ == '__main__':
 
     sqs = boto3.Session(
-        profile_name='frontend',
-        region_name='eu-west-1'
+        aws_access_key_id=AWS_USER,
+        aws_secret_access_key=AWS_KEY,
+        region_name='eu-west-1'    
     ).resource('sqs')
     
     trousers = Trousers()

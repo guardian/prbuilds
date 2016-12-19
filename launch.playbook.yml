@@ -1,8 +1,5 @@
 ---
 - hosts: localhost
-  environment:
-    AWS_PROFILE: frontend
-    ANSIBLE_HOST_KEY_CHECKING: False
   tasks:
     
     - name: launch an instance
@@ -36,7 +33,57 @@
       with_items: "{{ ec2.instances }}"
 
 - hosts: pickles
-  remote_user: ubuntu    
-  roles:
-    - article
+  remote_user: ubuntu
     
+  environment:
+    AWS_USER: "{{aws_user}}"
+    AWS_KEY: "{{aws_key}}"
+    GH_NAME: "{{gh_name}}"
+    GH_TOKEN: "{{gh_token}}"
+
+  tasks:
+    - name: "Copy over the software"
+      copy:
+        src=./trousers
+        dest=~/
+
+    - name: install pip
+      apt:
+        name: python-pip
+        update_cache: yes
+      become: true
+
+    - name: install build-essential
+      apt:
+        name: build-essential
+        update_cache: yes
+      become: true
+
+    - name: install python dev
+      apt:
+        name: python-dev
+        update_cache: yes
+      become: true
+
+    - name: install libffi
+      apt:
+        name: libffi-dev
+        update_cache: yes
+      become: true
+
+    - name: install libssl
+      apt:
+        name: libssl-dev
+        update_cache: yes
+      become: true    
+    
+    - name: install python libs
+      command: pip install -r /home/ubuntu/trousers/requirements.txt
+      args:
+        chdir: /home/ubuntu/trousers
+      become: true
+    
+    - name: run trousers
+      command: screen -d -m python trousers.py
+      args:
+        chdir: /home/ubuntu/trousers

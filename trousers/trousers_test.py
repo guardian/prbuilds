@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import unittest, json
 from trousers import Trousers
 
@@ -5,11 +7,17 @@ class MockSubprocess:
     def call(self, args):
         self.lastArgs = args
 
+class MockResponse:
+    def __init__(self):
+        self.status_code = 200
+        self.text = "OK"
+        
 class MockRequests:
     def post(self, url, data, auth):
         self.lastUrl = url
         self.lastData = data
-        
+        return MockResponse()
+
 class TrousersTests(unittest.TestCase):
 
     def test_extract_branch(self):
@@ -31,7 +39,15 @@ class TrousersTests(unittest.TestCase):
         t.requests = r
         t.github_comment("url", "testing")
         self.assertTrue("url" in r.lastUrl)
-        self.assertEqual(r.lastData["body"], "testing")
+        self.assertTrue("testing" in r.lastData)
+
+    def test_extract_comment_url(self):
+        t = Trousers()
+        mock = open("gh_pull.mock").read()
+        self.assertEqual(
+            t.extract_comment_url(mock),
+            "https://api.github.com/repos/MatthewJWalls/dotfiles/issues/1/comments"
+        )
         
 if __name__ == '__main__':
         unittest.main()
