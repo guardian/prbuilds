@@ -82,7 +82,12 @@
       args:
         chdir: /home/ubuntu/trousers
       become: true
-    
+
+    - name: run ether
+      command: screen -d -m python ether.py
+      args:
+        chdir: /home/ubuntu/trousers
+        
     - name: run trousers
       command: screen -d -m python trousers.py
       args:
