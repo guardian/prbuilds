@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import boto3, time, ansible, subprocess, json, requests, os
+import boto3, time, ansible, subprocess, json, requests, os, sys
 from requests.auth import HTTPBasicAuth
 
 QUEUE_NAME = 'trousers_in';
@@ -73,6 +73,7 @@ class Trousers:
         )
 
         if res.status_code != 200:
+            print res.text
             raise Exception("Github Comment failed")
         
     def extract_comment_url(self, data):
@@ -82,14 +83,28 @@ class Trousers:
     def extract_branch(self, data):
         obj = json.loads(data)
         return obj["pull_request"]["head"]["ref"]
-
+    
 if __name__ == '__main__':
 
+    # check environment variables existed
+
+    try:
+        os.environ['GH_NAME']
+        os.environ['GH_TOKEN']
+        os.environ['AWS_USER']
+        os.environ['AWS_KEY']
+    except:
+        sys.exit("Environment not correctly set")
+
+    # get the sqs queue
+    
     sqs = boto3.Session(
         aws_access_key_id=AWS_USER,
         aws_secret_access_key=AWS_KEY,
         region_name='eu-west-1'    
     ).resource('sqs')
+
+    # launch trousers
     
     trousers = Trousers()
 
