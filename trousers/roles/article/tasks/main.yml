@@ -3,7 +3,8 @@
   git:
     repo: 'https://github.com/guardian/frontend.git'
     dest: ~/frontend
-    version: stubbed-runtime
+    depth: 1
+    version: "{{branch}}"
 
 - name: set to devinfra
   lineinfile:
