@@ -29,6 +29,8 @@ class Trousers:
             
             self.build(branch)
 
+            print "Pushing comment to: %s" % prurl
+            
             try:
                 self.github_comment(prurl, "Build complete")
             except:
