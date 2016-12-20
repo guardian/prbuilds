@@ -1,13 +1,17 @@
 ansible==2.2.0.0
+boto==2.44.0
 boto3==1.4.2
 botocore==1.4.84
 cffi==1.9.1
+click==6.6
 cryptography==1.6
 docutils==0.12
 enum34==1.1.6
+Flask==0.11.1
 futures==3.0.5
 idna==2.1
 ipaddress==1.0.17
+itsdangerous==0.24
 Jinja2==2.8
 jmespath==0.9.0
 MarkupSafe==0.23
@@ -19,4 +23,6 @@ python-dateutil==2.6.0
 PyYAML==3.12
 requests==2.12.3
 s3transfer==0.1.9
+scientist==0.1.0
 six==1.10.0
+Werkzeug==0.11.11
