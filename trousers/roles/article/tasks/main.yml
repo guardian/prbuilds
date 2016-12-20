@@ -49,5 +49,9 @@
     port: 9000
     delay: 7
 
+- name: check that localhost is returning 200 for an article
+  uri:
+      url: http://localhost:9000/category/day/mon/year/slug
+
 - name: kill the application
   command: screen -S trousers-build -X quit
