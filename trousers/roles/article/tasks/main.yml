@@ -15,11 +15,10 @@
 
 - name: override location of capi
   lineinfile:
-    dest: ~/.gu/frontend.conf
+    dest: /home/ubuntu/.gu/frontend.conf
     regexp: '^content.api.host.*'
     line: 'content.api.host = "http://localhost:9001"'
     create: yes
-  become: true
 
 - name: preinstall nvm
   shell: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
