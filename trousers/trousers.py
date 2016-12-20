@@ -26,8 +26,14 @@ class Trousers:
             msg = self.receive(queue, 2)
             branch = self.extract_branch(msg.body)
             prurl = self.extract_comment_url(msg.body)
+            
             self.build(branch)
-            self.github_comment(prurl, "Build complete")
+
+            try:
+                self.github_comment(prurl, "Build complete")
+            except:
+                print "Failed to comment on pull request"
+                
             msg.delete()
     
     def receive(self, queue, interval=5):
@@ -63,6 +69,9 @@ class Trousers:
                 GH_TOKEN
             )
         )
+
+        if res.status_code != 200:
+            raise Exception("Github Comment failed")
         
     def extract_comment_url(self, data):
         obj = json.loads(data)

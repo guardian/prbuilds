@@ -23,7 +23,7 @@ class TrousersTests(unittest.TestCase):
     def test_extract_branch(self):
         mock = open("gh_pull.mock").read()
         t = Trousers()
-        self.assertTrue(t.extract_branch(mock) == "changes")
+        self.assertTrue(t.extract_branch(mock) == "overridable-devinfra")
 
     def test_build_calls_ansible(self):
         t = Trousers()
