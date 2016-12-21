@@ -2,6 +2,7 @@
       "action": "opened",
       "number": 1,
       "pull_request": {
+        "number": 1,
         "url": "https://api.github.com/repos/MatthewJWalls/dotfiles/pulls/1",
         "state": "open",
         "title": "Update the README with new information",

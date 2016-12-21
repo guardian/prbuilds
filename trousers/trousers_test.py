@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import unittest, json
+import unittest, json, boto3, os
 from trousers import Trousers
 
 class MockSubprocess:
@@ -20,8 +20,35 @@ class MockRequests:
         self.lastData = data
         return MockResponse()
 
+class MockBucket:
+    def upload_file(self, source, dest):
+        self.source = source
+        self.dest = dest
+    
 class TrousersTests(unittest.TestCase):
 
+    def test_artifact_upload(self):
+        mock = open("gh_pull.mock").read()
+        t = Trousers()
+        b = MockBucket()
+        t.upload_artifacts(b, "1", "./data")
+        self.assertEqual(b.dest, "PR-1/screenshots/article")
+        self.assertTrue(b.source.endswith("data/article"))
+
+    def test_artifact_upload_real(self):
+        
+        t = Trousers()
+        
+        session = boto3.Session(
+            aws_access_key_id=os.environ['AWS_USER'],
+            aws_secret_access_key=os.environ['AWS_KEY'],
+            region_name='eu-west-1'    
+        )
+    
+        bucket = session.resource('s3').Bucket('prbuilds')
+
+        t.upload_artifacts(bucket, "1", "./data")
+    
     def test_extract_branch(self):
         mock = open("gh_pull.mock").read()
         t = Trousers()

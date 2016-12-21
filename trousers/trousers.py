@@ -3,7 +3,9 @@
 import boto3, time, ansible, subprocess, json, requests, os, sys
 from requests.auth import HTTPBasicAuth
 
+ARTIFACTS_DIR = '/home/ubuntu/workspace/screenshots'
 QUEUE_NAME = 'trousers_in';
+BUCKET_NAME = 'prbuilds'
 GH_NAME = os.getenv('GH_NAME', '')
 GH_TOKEN = os.getenv('GH_TOKEN', '')
 AWS_USER = os.getenv('AWS_USER', '') 
@@ -18,27 +20,33 @@ class Trousers:
         self.subprocess = subprocess
         self.requests = requests
         
-    def start(self, queue):
+    def start(self, queue, bucket):
 
         """ busy waiting loop """
         
         while True:
-            msg = self.receive(queue, 2)
-            branch = self.extract_branch(msg.body)
-            repo = self.extract_clone_url(msg.body)
-            prurl = self.extract_comment_url(msg.body)
-            
-            self.build(repo, branch)
+            self.process_message(
+                self.receive(queue, 2)
+            )
 
-            print "Pushing comment to: %s" % prurl
-            
-            try:
-                self.github_comment(prurl, "Build complete")
-            except:
-                print "Failed to comment on pull request"
-                
-            msg.delete()
-    
+    def process_message(self, msg):
+
+        """ process a message coming off the sqs queue """
+        
+        branch = self.extract_branch(msg.body)
+        repo = self.extract_clone_url(msg.body)
+        prnum = self.extract_prnum(msg.body)
+        prurl = self.extract_comment_url(msg.body)
+
+        try:
+            self.build(repo, branch)
+            self.upload_artifacts(bucket, prnum, ARTIFACTS_DIR)
+            self.github_comment(prurl, "PR Regression test complete")
+        except:
+            print "PR build failed"
+
+        msg.delete()            
+
     def receive(self, queue, interval=5):
 
         """ Wait for an SQS message and then return it """
@@ -62,8 +70,24 @@ class Trousers:
             "-v"
         ])
 
+    def upload_artifacts(self, bucket, prnum, directory):
+
+        """ Upload results to S3 """
+
+        def upload(path):
+            bucket.upload_file(
+                path, "PR-%s/screenshots/%s" % (prnum, os.path.basename(path))
+            )
+
+        for root, directories, filenames in os.walk(directory):
+            for filename in filenames:
+                print "Uploading file '%s' to S3" % filename
+                upload(os.path.join(root,filename))
+
     def github_comment(self, url, body):
 
+        """ Add github comment using url endpoint """
+        
         res = self.requests.post(
             url,
             data = '{ "body" : "%s" }' % body,
@@ -86,6 +110,10 @@ class Trousers:
     def extract_clone_url(self, data):
         obj = json.loads(data)
         return obj["pull_request"]["head"]["repo"]["clone_url"]
+
+    def extract_prnum(self, data):
+        obj = json.loads(data)
+        return obj["pull_request"]["number"]
     
 if __name__ == '__main__':
 
@@ -99,14 +127,17 @@ if __name__ == '__main__':
     except:
         sys.exit("Environment not correctly set")
 
-    # get the sqs queue
-    
-    sqs = boto3.Session(
+    # get the sqs queue and results bucket
+
+    session = boto3.Session(
         aws_access_key_id=AWS_USER,
         aws_secret_access_key=AWS_KEY,
         region_name='eu-west-1'    
-    ).resource('sqs')
-
+    )
+    
+    sqs = session.resource('sqs')
+    s3 = session.resource('s3')
+    
     # launch trousers
     
     trousers = Trousers()
@@ -116,5 +147,8 @@ if __name__ == '__main__':
     trousers.start(
         sqs.get_queue_by_name(
             QueueName=QUEUE_NAME
-        )   
+        ),
+        s3.Bucket(
+            BUCKET_NAME
+        )
     )
