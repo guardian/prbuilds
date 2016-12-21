@@ -72,10 +72,8 @@ class Trousers:
             )
         )
 
-        if res.status_code != 200:
-            print res.text
-            raise Exception("Github Comment failed")
-        
+        res.raise_for_status()        
+
     def extract_comment_url(self, data):
         obj = json.loads(data)
         return obj["pull_request"]["comments_url"]

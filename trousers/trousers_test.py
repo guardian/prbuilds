@@ -11,7 +11,9 @@ class MockResponse:
     def __init__(self):
         self.status_code = 200
         self.text = "OK"
-        
+    def raise_for_status(self):
+        pass
+    
 class MockRequests:
     def post(self, url, data, auth):
         self.lastUrl = url
