@@ -31,9 +31,9 @@ class TrousersTests(unittest.TestCase):
         t = Trousers()
         p = MockSubprocess()
         t.subprocess = p
-        t.build("hello")
+        t.build("repo", "hello")
         self.assertEqual(p.lastArgs[0], "ansible-playbook")
-        self.assertEqual(p.lastArgs[3], "branch=hello")
+        self.assertEqual(p.lastArgs[3], "branch=hello clone_url=repo")
 
     def test_github_comment(self):
         t = Trousers()

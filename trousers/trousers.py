@@ -25,9 +25,10 @@ class Trousers:
         while True:
             msg = self.receive(queue, 2)
             branch = self.extract_branch(msg.body)
+            repo = self.extract_clone_url(msg.body)
             prurl = self.extract_comment_url(msg.body)
             
-            self.build(branch)
+            self.build(repo, branch)
 
             print "Pushing comment to: %s" % prurl
             
@@ -47,7 +48,7 @@ class Trousers:
                 return message
             time.sleep(interval)
 
-    def build(self, branch="master"):
+    def build(self, repo, branch="master"):
 
         """ Run the build script """
 
@@ -57,7 +58,7 @@ class Trousers:
             "ansible-playbook",
             "build.playbook.yml",
             "--extra-vars",
-            "branch=%s" % branch,
+            "branch=%s clone_url=%s" % (branch, repo),
             "-v"
         ])
 
@@ -81,6 +82,10 @@ class Trousers:
     def extract_branch(self, data):
         obj = json.loads(data)
         return obj["pull_request"]["head"]["ref"]
+
+    def extract_clone_url(self, data):
+        obj = json.loads(data)
+        return obj["pull_request"]["head"]["repo"]["clone_url"]
     
 if __name__ == '__main__':
 

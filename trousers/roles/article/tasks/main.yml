@@ -1,8 +1,8 @@
 ---
 - name: clone the repo
   git:
-    repo: 'https://github.com/guardian/frontend.git'
-    dest: ~/frontend
+    repo: "{{clone_url}}"
+    dest: ~/workspace
     depth: 1
     version: "{{branch}}"
 
@@ -27,23 +27,23 @@
 - name: preinstall nvm part II
   shell: . ~/.nvm/nvm.sh; nvm install
   args:
-    chdir: ~/frontend
+    chdir: ~/workspace
     executable: /bin/bash
 
 - name: run setup.py
-  command: ~/frontend/setup.sh
+  command: ~/workspace/setup.sh
   args:
-    chdir: ~/frontend/
+    chdir: ~/workspace/
 
 - name: sbt compile
-  command: ~/frontend/sbt "project article" "compile"
+  command: ~/workspace/sbt "project article" "compile"
   args:
-    chdir: ~/frontend
+    chdir: ~/workspace
 
 - name: run the article project
-  command: screen -S trousers-build -d -m ~/frontend/sbt "project article" "run"
+  command: screen -S trousers-build -d -m ~/workspace/sbt "project article" "run"
   args:
-    chdir: ~/frontend
+    chdir: ~/workspace
 
 - name: wait for the application to become available
   wait_for:
