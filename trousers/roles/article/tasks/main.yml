@@ -10,15 +10,15 @@
   lineinfile:
     dest: /etc/gu/install_vars
     regexp: '^STAGE='
-    line: 'STAGE=DEVINFRA'
+    line: 'STAGE=DEV'
     create: yes
   become: true
 
 - name: override location of capi
   lineinfile:
     dest: /home/ubuntu/.gu/frontend.conf
-    regexp: '^content.api.host.*'
-    line: 'content.api.host = "http://localhost:9001"'
+    regexp: '^devOverrides.*'
+    line: 'devOverrides { content.api.host = "http://localhost:9001" }'
     create: yes
 
 - name: preinstall nvm
@@ -52,7 +52,13 @@
 
 - name: check that localhost is returning 200 for an article
   uri:
-      url: http://localhost:9000/category/day/mon/year/slug
+      url: http://localhost:9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism
+
+- name: run screenshots
+  command: make screenshots
+  args:
+    chdir: ~/workspace
 
 - name: kill the application
   command: screen -S trousers-build -X quit
+

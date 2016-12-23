@@ -70,6 +70,10 @@ class TrousersTests(unittest.TestCase):
         self.assertTrue("url" in r.lastUrl)
         self.assertTrue("testing" in r.lastData)
 
+    def test_real_github_comment(self):
+        t = Trousers()
+        t.github_comment("https://api.github.com/repos/MatthewJWalls/frontend/issues/1/comments", "PR build results: \n ![](https://s3-eu-west-1.amazonaws.com/prbuilds/PR-%s/%s | width=100)")
+        
     def test_extract_comment_url(self):
         t = Trousers()
         mock = open("gh_pull.mock").read()
