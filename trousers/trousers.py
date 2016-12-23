@@ -10,6 +10,40 @@ BUCKET_NAME = 'prbuilds'
 GH_NAME = os.getenv('GH_NAME', '')
 GH_TOKEN = os.getenv('GH_TOKEN', '')
 
+class PullRequest:
+    def __init__(self, obj):
+        self.commentUrl = obj["pull_request"]["comments_url"]
+        self.branch = obj["pull_request"]["head"]["ref"]
+        self.cloneUrl = obj["pull_request"]["head"]["repo"]["clone_url"]
+        self.prnum = obj["pull_request"]["number"]
+
+
+class GitHubService:
+
+    def __init__(self):
+
+        """ constructor """
+        
+        self.requests = requests
+    
+    def post_comment(self, url, body):
+
+        """ Add github comment using url endpoint """
+       
+	payload = { "body": body }
+        
+        res = self.requests.post(
+            url,
+            data = json.dumps(payload),
+            auth = HTTPBasicAuth(
+                GH_NAME,
+                GH_TOKEN
+            )
+        )
+
+        res.raise_for_status()        
+
+        
 class Trousers:
 
     def __init__(self):
@@ -17,7 +51,7 @@ class Trousers:
         """ constructor """
 
         self.subprocess = subprocess
-        self.requests = requests
+        self.github = GitHubService()
         
     def start(self, queue, bucket):
 
@@ -46,16 +80,30 @@ class Trousers:
         
         try:
 
-            branch = self.extract_branch(msg.body)
-            repo = self.extract_clone_url(msg.body)
-            prnum = self.extract_prnum(msg.body)
-            prurl = self.extract_comment_url(msg.body)
+            pr = PullRequest(msg.body)
 
-            self.build(repo, branch)
+            self.build(
+                pr.cloneUrl,
+                pr.branch
+            )
 
-            facts = self.upload_artifacts(bucket, prnum, ARTIFACTS_DIR)
+            facts = self.collect_artifacts(
+                ARTIFACTS_DIR
+            )
 
-            self.github_comment(prurl, self.compose_github_comment(prnum, facts))
+            self.upload_artifacts(
+                bucket,
+                "PR-%s/screenshots" % pr.prnum,
+                facts
+            )
+
+            self.github.post_comment(
+                pr.commentUrl,
+                self.compose_github_comment(
+                    pr.prnum,
+                    facts
+                )
+            )
 
             print "PR Build success"
 
@@ -65,8 +113,6 @@ class Trousers:
             logging.error(err)
             logging.error(traceback.format_exc())
 	    
-	    open("messages.log", "w").write(msg.body)
-
         msg.delete()            
 
     def receive(self, queue, interval=5):
@@ -82,8 +128,6 @@ class Trousers:
 
         """ Run the build script """
 
-        print "Running ansible play for branch: %s" % branch
-
         self.subprocess.call([
             "ansible-playbook",
             "build.playbook.yml",
@@ -92,61 +136,30 @@ class Trousers:
             "-v"
         ])
 
-    def upload_artifacts(self, bucket, prnum, directory):
+    def collect_artifacts(self, directory):
+
+        """ collect a list of all the artifacts from this run """
+
+        for root, directories, filenames in os.walk(directory):
+            for filename in filenames:
+                yield os.path.join(root, filename)
+
+    def upload_artifacts(self, bucket, prefix, artifacts):
 
         """ Upload results to S3 """
-
-	def artifact_list():
-            for root, directories, filenames in os.walk(directory):
-                for filename in filenames:
-                    yield os.path.join(root, filename)
 
         def upload(path):
             bucket.upload_file(
                 path, 
-                "PR-%s/screenshots/%s" % (prnum, os.path.basename(path)),
+                "%s/%s" % (prefix, os.path.basename(path)),
                 ExtraArgs={ 'ContentType': 'image/png', 'ACL': 'public-read' }
             )
 
-        for filename in artifact_list():
+        for filename in artifacts:
             print "Uploading file '%s' to S3" % filename
             upload(filename)
 
-        return artifact_list()
 
-    def github_comment(self, url, body):
-
-        """ Add github comment using url endpoint """
-       
-	payload = { "body": body }
-        
-        res = self.requests.post(
-            url,
-            data = json.dumps(payload),
-            auth = HTTPBasicAuth(
-                GH_NAME,
-                GH_TOKEN
-            )
-        )
-
-        res.raise_for_status()        
-
-    def extract_comment_url(self, data):
-        obj = json.loads(data)
-        return obj["pull_request"]["comments_url"]
-
-    def extract_branch(self, data):
-        obj = json.loads(data)
-        return obj["pull_request"]["head"]["ref"]
-
-    def extract_clone_url(self, data):
-        obj = json.loads(data)
-        return obj["pull_request"]["head"]["repo"]["clone_url"]
-
-    def extract_prnum(self, data):
-        obj = json.loads(data)
-        return obj["pull_request"]["number"]
-    
 if __name__ == '__main__':
 
     # check environment variables existed
