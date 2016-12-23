@@ -36,8 +36,6 @@
   remote_user: ubuntu
     
   environment:
-    AWS_USER: "{{aws_user}}"
-    AWS_KEY: "{{aws_key}}"
     GH_NAME: "{{gh_name}}"
     GH_TOKEN: "{{gh_token}}"
 

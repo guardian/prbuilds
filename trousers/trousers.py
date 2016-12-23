@@ -9,8 +9,6 @@ QUEUE_NAME = 'trousers_in';
 BUCKET_NAME = 'prbuilds'
 GH_NAME = os.getenv('GH_NAME', '')
 GH_TOKEN = os.getenv('GH_TOKEN', '')
-AWS_USER = os.getenv('AWS_USER', '') 
-AWS_KEY = os.getenv('AWS_KEY', '')
 
 class Trousers:
 
@@ -156,16 +154,12 @@ if __name__ == '__main__':
     try:
         os.environ['GH_NAME']
         os.environ['GH_TOKEN']
-        os.environ['AWS_USER']
-        os.environ['AWS_KEY']
     except:
         sys.exit("Environment not correctly set")
 
     # get the sqs queue and results bucket
 
     session = boto3.Session(
-        aws_access_key_id=AWS_USER,
-        aws_secret_access_key=AWS_KEY,
         region_name='eu-west-1'    
     )
     
