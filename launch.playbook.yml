@@ -42,9 +42,14 @@
     GH_TOKEN: "{{gh_token}}"
 
   tasks:
-    - name: "Copy over the software"
+    - name: "Copy trousers"
       copy:
         src=./trousers
+        dest=~/
+
+    - name: "Copy Ether"
+      copy:
+        src=./ether
         dest=~/
 
     - name: install pip
@@ -86,7 +91,7 @@
     - name: run ether
       command: screen -d -m python ether.py
       args:
-        chdir: /home/ubuntu/trousers
+        chdir: /home/ubuntu/ether
         
     - name: run trousers
       command: screen -d -m python trousers.py
