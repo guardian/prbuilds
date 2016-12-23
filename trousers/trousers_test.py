@@ -21,36 +21,23 @@ class MockRequests:
         return MockResponse()
 
 class MockBucket:
-    def upload_file(self, source, dest):
+    def upload_file(self, source, dest, ExtraArgs):
         self.source = source
         self.dest = dest
+        self.args = ExtraArgs
     
 class TrousersTests(unittest.TestCase):
 
     def test_artifact_upload(self):
-        mock = open("gh_pull.mock").read()
+        mock = open("data/gh_pull.mock").read()
         t = Trousers()
         b = MockBucket()
-        t.upload_artifacts(b, "1", "./data")
-        self.assertEqual(b.dest, "PR-1/screenshots/article")
-        self.assertTrue(b.source.endswith("data/article"))
+        t.upload_artifacts(b, "1", "./data/")
+        self.assertEqual(b.dest, "PR-1/screenshots/gh_pull.mock")
+        self.assertTrue(b.source.endswith("data/gh_pull.mock"))
 
-    def test_artifact_upload_real(self):
-        
-        t = Trousers()
-        
-        session = boto3.Session(
-            aws_access_key_id=os.environ['AWS_USER'],
-            aws_secret_access_key=os.environ['AWS_KEY'],
-            region_name='eu-west-1'    
-        )
-    
-        bucket = session.resource('s3').Bucket('prbuilds')
-
-        t.upload_artifacts(bucket, "1", "./data")
-    
     def test_extract_branch(self):
-        mock = open("gh_pull.mock").read()
+        mock = open("data/gh_pull.mock").read()
         t = Trousers()
         self.assertTrue(t.extract_branch(mock) == "overridable-devinfra")
 
@@ -70,13 +57,9 @@ class TrousersTests(unittest.TestCase):
         self.assertTrue("url" in r.lastUrl)
         self.assertTrue("testing" in r.lastData)
 
-    def test_real_github_comment(self):
-        t = Trousers()
-        t.github_comment("https://api.github.com/repos/MatthewJWalls/frontend/issues/1/comments", "PR build results: \n ![](https://s3-eu-west-1.amazonaws.com/prbuilds/PR-%s/%s | width=100)")
-        
     def test_extract_comment_url(self):
         t = Trousers()
-        mock = open("gh_pull.mock").read()
+        mock = open("data/gh_pull.mock").read()
         self.assertEqual(
             t.extract_comment_url(mock),
             "https://api.github.com/repos/MatthewJWalls/dotfiles/issues/1/comments"
