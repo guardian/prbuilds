@@ -1,4 +1,4 @@
-#!/usr/birzxcasdpoi/sn/env python
+#!/usr/bin/env python
 
 import boto3, time, ansible, subprocess, json, requests, os, sys
 import traceback, logging
@@ -12,10 +12,11 @@ GH_TOKEN = os.getenv('GH_TOKEN', '')
 
 class PullRequest:
     def __init__(self, obj):
-        self.commentUrl = obj["pull_request"]["comments_url"]
-        self.branch = obj["pull_request"]["head"]["ref"]
-        self.cloneUrl = obj["pull_request"]["head"]["repo"]["clone_url"]
-        self.prnum = obj["pull_request"]["number"]
+        data = json.loads(obj)["pull_request"]
+        self.commentUrl = data["comments_url"]
+        self.branch = data["head"]["ref"]
+        self.cloneUrl = data["head"]["repo"]["clone_url"]
+        self.prnum = data["number"]
 
 
 class GitHubService:

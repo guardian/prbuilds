@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest, json, boto3, os
-from trousers import Trousers
+from trousers import Trousers, PullRequest, GitHubService
 
 class MockSubprocess:
     def call(self, args):
@@ -25,22 +25,35 @@ class MockBucket:
         self.source = source
         self.dest = dest
         self.args = ExtraArgs
-    
+
+
+class GitHubServiceTests(unittest.TestCase):
+
+    def test_post_comment(self):
+        s = GitHubService()
+        r = MockRequests()
+        s.requests = r
+        s.post_comment("url", "payload")
+        self.assertEqual(r.lastUrl, "url")
+        self.assertTrue("payload" in r.lastData)
+        
+class PullRequestTests(unittest.TestCase):
+
+    def test_fields(self):
+        mock = open("data/gh_pull.mock").read()
+        pull = PullRequest(mock)
+        self.assertEqual(pull.branch, "overridable-devinfra")
+        self.assertTrue("dotfiles" in pull.cloneUrl)
+        self.assertTrue("dotfiles" in pull.commentUrl)
+        self.assertEqual(pull.prnum, 1)
+        
 class TrousersTests(unittest.TestCase):
 
-    def test_artifact_upload(self):
-        mock = open("data/gh_pull.mock").read()
+    def test_collect_artifacts(self):
         t = Trousers()
-        b = MockBucket()
-        t.upload_artifacts(b, "1", "./data/")
-        self.assertEqual(b.dest, "PR-1/screenshots/gh_pull.mock")
-        self.assertTrue(b.source.endswith("data/gh_pull.mock"))
-
-    def test_extract_branch(self):
-        mock = open("data/gh_pull.mock").read()
-        t = Trousers()
-        self.assertTrue(t.extract_branch(mock) == "overridable-devinfra")
-
+        files = t.collect_artifacts("./data")
+        self.assertEqual(len([x for x in files]), 2)
+        
     def test_build_calls_ansible(self):
         t = Trousers()
         p = MockSubprocess()
@@ -49,21 +62,12 @@ class TrousersTests(unittest.TestCase):
         self.assertEqual(p.lastArgs[0], "ansible-playbook")
         self.assertEqual(p.lastArgs[3], "branch=hello clone_url=repo")
 
-    def test_github_comment(self):
+    def test_compose_github_comment(self):
         t = Trousers()
-        r = MockRequests()
-        t.requests = r
-        t.github_comment("url", "testing")
-        self.assertTrue("url" in r.lastUrl)
-        self.assertTrue("testing" in r.lastData)
-
-    def test_extract_comment_url(self):
-        t = Trousers()
-        mock = open("data/gh_pull.mock").read()
-        self.assertEqual(
-            t.extract_comment_url(mock),
-            "https://api.github.com/repos/MatthewJWalls/dotfiles/issues/1/comments"
-        )
+        msg = t.compose_github_comment("1", ["/a/b", "/a/c"])
+        self.assertTrue("PR-1" in msg)
+        self.assertTrue("screenshots/b" in msg)
+        self.assertTrue("screenshots/c" in msg)
         
 if __name__ == '__main__':
         unittest.main()

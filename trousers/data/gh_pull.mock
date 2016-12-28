@@ -12,7 +12,10 @@
         "head": {
           "label": "MatthewJWalls:changes",
           "ref": "overridable-devinfra",
-          "sha": "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c"
+          "sha": "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c",
+          "repo": {
+            "clone_url" : "https//github.com/MatthewJWalls/dotfiles"
+          }
         }
       }
 }
