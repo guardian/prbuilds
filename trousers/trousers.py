@@ -83,6 +83,9 @@ class Trousers:
 
             pr = PullRequest(msg.body)
 
+            if pr.action not in ["opened", "synchronize"]:
+                print "PR not being opened/pushed to. Ignoring"
+
             self.build(
                 pr.cloneUrl,
                 pr.branch
