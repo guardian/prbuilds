@@ -10,6 +10,7 @@
         wait: yes
         count: 1
         vpc_subnet_id: subnet-c682e7b0
+        instance_profile_name: TrousersInstanceProfile
         assign_public_ip: yes
         group_id: sg-d7827eb1
         region: eu-west-1
