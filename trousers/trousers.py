@@ -141,9 +141,12 @@ class Trousers:
 
         """ collect a list of all the artifacts from this run """
 
+        facts = []
+
         for root, directories, filenames in os.walk(directory):
-            for filename in filenames:
-                yield os.path.join(root, filename)
+            facts += [os.path.join(root, f) for f in filenames]
+
+        return facts
 
     def upload_artifacts(self, bucket, prefix, artifacts):
 
