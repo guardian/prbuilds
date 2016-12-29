@@ -55,9 +55,10 @@
       url: http://localhost:9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism
 
 - name: run screenshots
-  command: make screenshots
+  shell: . ~/.nvm/nvm.sh; nvm use; make screenshots
   args:
     chdir: ~/workspace
+    executable: /bin/bash
 
 - name: kill the application
   command: screen -S trousers-build -X quit
