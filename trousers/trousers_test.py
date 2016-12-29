@@ -52,7 +52,7 @@ class TrousersTests(unittest.TestCase):
     def test_collect_artifacts(self):
         t = Trousers()
         files = t.collect_artifacts("./data")
-        self.assertEqual(len([x for x in files]), 2)
+        self.assertEqual(len([x for x in files]), 1)
         
     def test_build_calls_ansible(self):
         t = Trousers()
