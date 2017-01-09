@@ -6,6 +6,7 @@ from trousers import Trousers, PullRequest, GitHubService
 class MockSubprocess:
     def call(self, args):
         self.lastArgs = args
+        return 0
 
 class MockResponse:
     def __init__(self):
@@ -36,6 +37,24 @@ class GitHubServiceTests(unittest.TestCase):
         s.post_comment("url", "payload")
         self.assertEqual(r.lastUrl, "url")
         self.assertTrue("payload" in r.lastData)
+
+    def test_has_comment(self):
+        s = GitHubService()
+        self.assertTrue(
+            s.has_comment(
+                "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
+                "PR build"
+            )
+        )
+
+    def test_has_no_comment(self):
+        s = GitHubService()
+        self.assertFalse(
+            s.has_comment(
+                "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
+                "WoooWooooowoowoww"
+            )
+        )
         
 class PullRequestTests(unittest.TestCase):
 

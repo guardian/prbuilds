@@ -27,7 +27,19 @@ class GitHubService:
         """ constructor """
         
         self.requests = requests
-    
+
+    def has_comment(self, url, including):
+
+        res = self.requests.get(url)
+
+        res.raise_for_status()
+
+        for post in res.json():
+            if including in post["body"]:
+                return True
+
+        return False
+        
     def post_comment(self, url, body):
 
         """ Add github comment using url endpoint """
@@ -74,6 +86,8 @@ class Trousers:
         for artifact in artifacts:
             msg += "* https://s3-eu-west-1.amazonaws.com/prbuilds/PR-%s/screenshots/%s \n" % (prnum, os.path.basename(artifact))	
 
+        msg += "\n -automated message"
+            
         return msg
 
     def process_message(self, msg, bucket):
@@ -104,13 +118,14 @@ class Trousers:
                 facts
             )
 
-            self.github.post_comment(
-                pr.commentUrl,
-                self.compose_github_comment(
-                    pr.prnum,
-                    facts
+            if not self.github.has_comment(pr.commentUrl, "-automated message"):
+                self.github.post_comment(
+                    pr.commentUrl,
+                    self.compose_github_comment(
+                        pr.prnum,
+                        facts
+                    )
                 )
-            )
 
             print "PR Build success"
 
