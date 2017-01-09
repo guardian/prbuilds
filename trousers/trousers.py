@@ -135,13 +135,16 @@ class Trousers:
 
         """ Run the build script """
 
-        self.subprocess.call([
+        ret = self.subprocess.call([
             "ansible-playbook",
             "build.playbook.yml",
             "--extra-vars",
             "branch=%s clone_url=%s" % (branch, repo),
             "-v"
         ])
+
+        if ret != 0:
+            raise Exception("Ansible play did not exit zero")
 
     def collect_artifacts(self, directory):
 
