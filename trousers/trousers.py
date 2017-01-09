@@ -12,12 +12,13 @@ GH_TOKEN = os.getenv('GH_TOKEN', '')
 
 class PullRequest:
     def __init__(self, obj):
-        data = json.loads(obj)["pull_request"]
+        head = json.loads(obj)
+        data = head["pull_request"]
         self.commentUrl = data["comments_url"]
         self.branch = data["head"]["ref"]
         self.cloneUrl = data["head"]["repo"]["clone_url"]
         self.prnum = data["number"]
-
+        self.action = head["action"]
 
 class GitHubService:
 
@@ -85,6 +86,8 @@ class Trousers:
 
             if pr.action not in ["opened", "synchronize"]:
                 print "PR not being opened/pushed to. Ignoring"
+                msg.delete()
+                return
 
             self.build(
                 pr.cloneUrl,
