@@ -9,8 +9,8 @@ function connectToInstance() {
     stripped=$(echo $domain | sed 's/"//g')
 
     echo "Connecting to $domain"
-    ssh -i ~/Downloads/matthew-walls.pem "ubuntu@$stripped"
+    ssh -i $1 "ubuntu@$stripped"
 
 }
 
-connectToInstance
+connectToInstance $1
