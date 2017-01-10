@@ -8,4 +8,4 @@ def article(category, year, mon, day, slug):
     return open("data/article", "r").read()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=9001)
+    app.run(debug=False, port=9001)
