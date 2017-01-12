@@ -11,6 +11,7 @@ GH_TOKEN = os.getenv('GH_TOKEN', '')
 QUEUE_NAME = os.getenv('QUEUE_NAME', '')
 
 class PullRequest:
+
     def __init__(self, obj):
         head = json.loads(obj)
         data = head["pull_request"]
@@ -19,6 +20,7 @@ class PullRequest:
         self.cloneUrl = data["head"]["repo"]["clone_url"]
         self.prnum = data["number"]
         self.action = head["action"]
+
 
 class GitHubService:
 
