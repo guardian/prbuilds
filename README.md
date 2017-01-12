@@ -32,7 +32,6 @@ goes wrong.
     
 ## Ongoing work
 
-* CloudFormation everything
 * Scala rewrite for RiffRaff deployability
 * Better modularisation of the tests to be ran
 * Remove hardcoding for the Guardian frontend
