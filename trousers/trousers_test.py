@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest, json, boto3, os
-from trousers import Trousers, PullRequest, GitHubService
+from trousers import Trousers, PullRequest, GitHubService, ArtifactService
 
 class MockSubprocess:
     def call(self, args):
@@ -65,13 +65,15 @@ class PullRequestTests(unittest.TestCase):
         self.assertTrue("dotfiles" in pull.cloneUrl)
         self.assertTrue("dotfiles" in pull.commentUrl)
         self.assertEqual(pull.prnum, 1)
-        
-class TrousersTests(unittest.TestCase):
 
-    def test_collect_artifacts(self):
-        t = Trousers()
-        files = t.collect_artifacts("./data")
+class ArtifactServiceTests(unittest.TestCase):
+
+    def test_collect(self):
+        a = ArtifactService()
+        files = a.collect("./data")
         self.assertEqual(len([x for x in files]), 1)
+
+class TrousersTests(unittest.TestCase):
         
     def test_build_calls_ansible(self):
         t = Trousers()

@@ -30,6 +30,8 @@ class GitHubService:
 
     def has_comment(self, url, including):
 
+        """ Is the given text included anywhere """
+        
         res = self.requests.get(url)
 
         res.raise_for_status()
@@ -57,7 +59,36 @@ class GitHubService:
 
         res.raise_for_status()        
 
-        
+
+class ArtifactService:
+
+    def collect(self, directory):
+
+        """ return list of all the artifacts in given directory """
+
+        facts = []
+
+        for root, directories, filenames in os.walk(directory):
+            facts += [os.path.join(root, f) for f in filenames]
+
+        return facts
+
+    def upload(self, bucket, prefix, artifacts):
+
+        """ Upload given artifact files to S3 """
+
+        def upload(path):
+            bucket.upload_file(
+                path,
+                "%s/%s" % (prefix, os.path.basename(path)),
+                ExtraArgs={ 'ContentType': 'image/png', 'ACL': 'public-read' }
+            )
+
+        for filename in artifacts:
+            print "Uploading file '%s' to S3" % filename
+            upload(filename)
+    
+
 class Trousers:
 
     def __init__(self):
@@ -66,6 +97,7 @@ class Trousers:
 
         self.subprocess = subprocess
         self.github = GitHubService()
+        self.artifacts = ArtifactService()
         
     def start(self, queue, bucket):
 
@@ -108,11 +140,11 @@ class Trousers:
                 pr.branch
             )
 
-            facts = self.collect_artifacts(
+            facts = self.artifacts.collect(
                 ARTIFACTS_DIR
             )
 
-            self.upload_artifacts(
+            self.artifacts.upload(
                 bucket,
                 "PR-%s/screenshots" % pr.prnum,
                 facts
@@ -127,7 +159,7 @@ class Trousers:
                     )
                 )
 
-            print "PR Build success"
+            print "PR Build %s success" % pr.prnum
 
         except Exception as err:
 
@@ -161,32 +193,6 @@ class Trousers:
         if ret != 0:
             raise Exception("Ansible play did not exit zero")
 
-    def collect_artifacts(self, directory):
-
-        """ collect a list of all the artifacts from this run """
-
-        facts = []
-
-        for root, directories, filenames in os.walk(directory):
-            facts += [os.path.join(root, f) for f in filenames]
-
-        return facts
-
-    def upload_artifacts(self, bucket, prefix, artifacts):
-
-        """ Upload results to S3 """
-
-        def upload(path):
-            bucket.upload_file(
-                path, 
-                "%s/%s" % (prefix, os.path.basename(path)),
-                ExtraArgs={ 'ContentType': 'image/png', 'ACL': 'public-read' }
-            )
-
-        for filename in artifacts:
-            print "Uploading file '%s' to S3" % filename
-            upload(filename)
-
 
 if __name__ == '__main__':
 
@@ -196,7 +202,7 @@ if __name__ == '__main__':
         os.environ['GH_NAME']
         os.environ['GH_TOKEN']
     except:
-        sys.exit("Environment not correctly set")
+        sys.exit("Environment variables missing")
 
     # get the sqs queue and results bucket
 
