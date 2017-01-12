@@ -218,7 +218,7 @@ if __name__ == '__main__':
     
     trousers = Trousers()
 
-    print "Starting"
+    print "Starting trousers on queue %s" % QUEUE_NAME
     
     trousers.start(
         sqs.get_queue_by_name(
