@@ -16,6 +16,8 @@ PR Builds is made up of two main components:
 1. Ether - a process that pretends to be CAPI and responds with mock data.
 2. Trousers - the script which handles the app build/test/github comment
 
+These two pieces of software are run together on one or more worker machines.
+
 In addition to this there is also a lambda which allows the builds to be triggered off
 a http endpoint (i.e. a webhook for GitHub to integrate with).
 
@@ -23,11 +25,11 @@ The lifecycle of a PR Build looks like this:
 
 1. GitHub webhook calls the lambda http endpoint
 2. The Lambda publishes the message from GitHub into an SQS Queue
-3. EC2 Instances running the Trousers script recieve the messages from the SQS Queue
+3. EC2 worker instances running the Trousers script recieve the messages from the SQS Queue
 4. Trousers runs an Ansible play to build, run and test the code associated with the PR
 
 The Queue-based architecture was chosen because it means the system can be scaled up
-from a single builde instance to many, and ensures that the workload persists if something
+from a single worker instance to many, and ensures that the workload persists if something
 goes wrong.
 
 ## Cloud Deployment
