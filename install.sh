@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Must be ran from the root of a prbuilds clone.
 # Must set GH_NAME, GH_TOKEN and QUEUE_NAME in environment first.
