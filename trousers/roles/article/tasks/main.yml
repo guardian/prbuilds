@@ -4,6 +4,7 @@
     repo: "{{clone_url}}"
     dest: ~/workspace
     depth: 1
+    force: yes
     version: "{{branch}}"
 
 - name: set to devinfra
