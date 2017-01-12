@@ -29,7 +29,15 @@ The lifecycle of a PR Build looks like this:
 The Queue-based architecture was chosen because it means the system can be scaled up
 from a single builde instance to many, and ensures that the workload persists if something
 goes wrong.
-    
+
+## Cloud Deployment
+
+* CloudFormation template included
+    * Parameters specify GitHub credentials and Queue name
+* Instances clone down this repo and run the install script
+* To update software, kill all the instances and let new ones launch
+    * This should not cause lost work since the Queue will persist
+
 ## Ongoing work
 
 * Scala rewrite for RiffRaff deployability
