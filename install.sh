@@ -5,6 +5,8 @@
 
 parent=$(pwd)
 
+echo "Installing as user $(whoami)"
+
 # install libs
 
 sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential
@@ -23,8 +25,12 @@ pip install -r trousers/requirements.txt
 
 # run the software
 
+echo "Launching ether"
+
 cd $parent/ether
-screen -d -m python ether.py
+screen -d -L -m python ether.py
+
+echo "Launching trousers"
 
 cd $parent/trousers
-screen -d -m python trousers.py
+screen -d -L -m python trousers.py
