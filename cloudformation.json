@@ -208,7 +208,35 @@
           {
             "Ref": "EC2SG9TSH"
           }
-        ]
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -xe\n",
+                "git clone https://github.com/guardian/prbuilds.git /home/ubuntu/prbuilds\n",
+                "export GH_NAME=",
+                {
+                  "Ref": "GitHubNameParameter"
+                },
+                "\n",
+                "export GH_TOKEN=",
+                {
+                  "Ref": "GitHubKeyParameter"
+                },
+                "\n",
+                "export QUEUE_NAME=",
+                {
+                  "Ref": "QueueNameParameter"
+                },
+                "\n",
+                "cd /home/ubuntu/prbuilds\n",
+                "./install.sh\n"
+              ]
+            ]
+          }
+        }
       },
       "Metadata": {
         "AWS::CloudFormation::Designer": {
@@ -301,15 +329,25 @@
       "Default": "1",
       "Description": "Scaling group size"
     },
-    "QueueNameParameter": {
-      "Type": "String",
-      "Default": "trousers-in",
-      "Description": "Queue name"
-    },
     "InstanceProfileParameter": {
       "Type": "String",
       "Default": "TrousersInstanceProfile",
       "Description": "Instance profile to use (must have SQS and S3 permissions)"
+    },
+    "QueueNameParameter": {
+      "Type": "String",
+      "Default": "trousers_in",
+      "Description": "Queue name"
+    },
+    "GitHubNameParameter": {
+      "Type": "String",
+      "Default": "PRBuilds",
+      "Description": "GitHub account name to use"
+    },
+    "GitHubKeyParameter": {
+      "Type": "String",
+      "Default": "",
+      "Description": "GitHub key to use"
     }
   }
 }
