@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# coding=UTF-8
 
 import boto3, time, ansible, subprocess, json, requests, os, sys
 import traceback, logging
 from requests.auth import HTTPBasicAuth
 
-ARTIFACTS_DIR = '/home/ubuntu/workspace/screenshots'
+ARTIFACTS_DIR = '/home/ubuntu/artifacts'
 BUCKET_NAME = 'prbuilds'
 GH_NAME = os.getenv('GH_NAME', '')
 GH_TOKEN = os.getenv('GH_TOKEN', '')
@@ -82,12 +83,12 @@ class ArtifactService:
         def upload(path):
             bucket.upload_file(
                 path,
-                "%s/%s" % (prefix, os.path.basename(path)),
+                "%s/%s" % (prefix, os.path.relpath(path, start=ARTIFACT_DIR)),
                 ExtraArgs={ 'ContentType': 'image/png', 'ACL': 'public-read' }
             )
 
         for filename in artifacts:
-            print "Uploading file '%s' to S3" % filename
+            print "Uploading file '%s' to S3" % os.path.basename(filename)
             upload(filename)
     
 
@@ -115,14 +116,12 @@ class Trousers:
 
         """ format a nice github message """
 
-        msg = "PR build results: \n"
+        def poke(artifact):
+            pre = "https://s3-eu-west-1.amazonaws.com/prbuilds"
+            pth = "PR-%s/%s \n" % (prnum, os.path.relpath(artifact, ARTIFACTS_DIR))
+            return "[%s](%s/%s)" % (os.path.basename(artifact), pre, pth)
 
-        for artifact in artifacts:
-            msg += "* https://s3-eu-west-1.amazonaws.com/prbuilds/PR-%s/screenshots/%s \n" % (prnum, os.path.basename(artifact))	
-
-        msg += "\n -automated message"
-            
-        return msg
+        return "PR build results:\n> %s\n -automated message" % "•".join([poke(a) for a in artifacts])
 
     def process_message(self, msg, bucket):
 
@@ -148,7 +147,7 @@ class Trousers:
 
             self.artifacts.upload(
                 bucket,
-                "PR-%s/screenshots" % pr.prnum,
+                "PR-%s" % pr.prnum,
                 facts
             )
 

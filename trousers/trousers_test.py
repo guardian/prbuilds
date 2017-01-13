@@ -85,10 +85,14 @@ class TrousersTests(unittest.TestCase):
 
     def test_compose_github_comment(self):
         t = Trousers()
-        msg = t.compose_github_comment("1", ["/a/b", "/a/c"])
+        msg = t.compose_github_comment("1", [
+            "/home/ubuntu/artifacts/screenshots/a.jpg",
+            "/home/ubuntu/artifacts/screenshots/b.jpg"
+        ])
         self.assertTrue("PR-1" in msg)
-        self.assertTrue("screenshots/b" in msg)
-        self.assertTrue("screenshots/c" in msg)
-        
+        self.assertTrue("screenshots/a.jpg" in msg)
+        self.assertTrue("screenshots/b.jpg" in msg)
+
+
 if __name__ == '__main__':
         unittest.main()

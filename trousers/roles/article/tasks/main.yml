@@ -1,4 +1,15 @@
 ---
+
+- name: wipe the artifacts directory
+- file:
+    path: /home/ubuntu/artifacts
+    state: absent
+
+- name: create the artifacts directory
+- file:
+    path: /home/ubuntu/artifacts
+    state: directory
+
 - name: clone the repo
   git:
     repo: "{{clone_url}}"
@@ -60,6 +71,12 @@
   args:
     chdir: ~/workspace
     executable: /bin/bash
+
+- name: copy screenshots into artifacts
+- name: run setup.py
+  shell: cp -r screenshots ~/artifacts/
+  args:
+    chdir: ~/workspace/
 
 - name: kill the application
   command: screen -S trousers-build -X quit
