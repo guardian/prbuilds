@@ -7,6 +7,14 @@ parent=$(pwd)
 
 echo "Installing as user $(whoami)"
 
+# when this script is ran from aws UserData, $HOME might not be set
+# which causes the install of nvm to wig out!
+
+if [[ "$HOME" == "" ]]; then
+    echo "Resetting HOME"
+    export HOME=/home/ubuntu
+fi
+
 # install libs
 
 sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential
