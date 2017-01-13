@@ -1,12 +1,12 @@
 ---
 
 - name: wipe the artifacts directory
-- file:
+  file:
     path: /home/ubuntu/artifacts
     state: absent
 
 - name: create the artifacts directory
-- file:
+  file:
     path: /home/ubuntu/artifacts
     state: directory
 
@@ -73,7 +73,6 @@
     executable: /bin/bash
 
 - name: copy screenshots into artifacts
-- name: run setup.py
   shell: cp -r screenshots ~/artifacts/
   args:
     chdir: ~/workspace/
