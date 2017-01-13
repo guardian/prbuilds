@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=UTF-8
 
-import boto3, time, ansible, subprocess, json, requests, os, sys
+import boto3, time, ansible, subprocess, json, requests, os, sys, urllib
 import traceback, logging
 from requests.auth import HTTPBasicAuth
 
@@ -60,7 +60,7 @@ class GitHubService:
             )
         )
 
-        res.raise_for_status()        
+        res.raise_for_status()
 
 
 class ArtifactService:
@@ -83,7 +83,7 @@ class ArtifactService:
         def upload(path):
             bucket.upload_file(
                 path,
-                "%s/%s" % (prefix, os.path.relpath(path, start=ARTIFACT_DIR)),
+                "%s/%s" % (prefix, os.path.relpath(path, start=ARTIFACTS_DIR)),
                 ExtraArgs={ 'ContentType': 'image/png', 'ACL': 'public-read' }
             )
 
@@ -118,10 +118,10 @@ class Trousers:
 
         def poke(artifact):
             pre = "https://s3-eu-west-1.amazonaws.com/prbuilds"
-            pth = "PR-%s/%s \n" % (prnum, os.path.relpath(artifact, ARTIFACTS_DIR))
+            pth = "PR-%s/%s \n" % (prnum, urllib.quote(os.path.relpath(artifact, ARTIFACTS_DIR)))
             return "[%s](%s/%s)" % (os.path.basename(artifact), pre, pth)
 
-        return "PR build results:\n> %s\n -automated message" % "•".join([poke(a) for a in artifacts])
+        return "PR build results:\n> %s\n\n -automated message" % " • ".join([poke(a) for a in artifacts])
 
     def process_message(self, msg, bucket):
 
