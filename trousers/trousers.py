@@ -76,6 +76,13 @@ class ArtifactService:
 
         return facts
 
+    def content_type(self, path):
+        return {
+            "jpg": "image/jpeg",
+            "png": "image/png",
+            "text": "text/plain"
+        }.get(path.split(".")[-1], "text/plain")
+    
     def upload(self, bucket, prefix, artifacts):
 
         """ Upload given artifact files to S3 """
@@ -84,7 +91,10 @@ class ArtifactService:
             bucket.upload_file(
                 path,
                 "%s/%s" % (prefix, os.path.relpath(path, start=ARTIFACTS_DIR)),
-                ExtraArgs={ 'ContentType': 'image/png', 'ACL': 'public-read' }
+                ExtraArgs={
+                    'ContentType': self.content_type(path),
+                    'ACL': 'public-read'
+                }
             )
 
         for filename in artifacts:

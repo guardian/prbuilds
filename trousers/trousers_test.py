@@ -73,6 +73,13 @@ class ArtifactServiceTests(unittest.TestCase):
         files = a.collect("./data")
         self.assertEqual(len([x for x in files]), 1)
 
+    def test_content_type(self):
+        a = ArtifactService()
+        self.assertEqual(a.content_type("a.jpg"), "image/jpeg")
+        self.assertEqual(a.content_type("a.png"), "image/png")
+        self.assertEqual(a.content_type("a.txt"), "text/plain")
+        self.assertEqual(a.content_type("a"), "text/plain")
+
 class TrousersTests(unittest.TestCase):
         
     def test_build_calls_ansible(self):
