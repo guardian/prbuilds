@@ -77,6 +77,17 @@
   args:
     chdir: ~/workspace/
 
+- name: clone down the webpagetest tool
+  git:
+    repo: "https://github.com/michaelwmcnamara/single-page-performance-tester.git"
+    dest: ~/perftester
+    depth: 1
+    force: yes
+
+- name: run webpage tests
+  shell: bash runme.sh $(curl http://169.254.169.254/latest/meta-data/public-hostname):9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism /home/ubuntu/artifacts
+  args:
+    chdir: /home/ubuntu/perftester
+
 - name: kill the application
   command: screen -S trousers-build -X quit
-
