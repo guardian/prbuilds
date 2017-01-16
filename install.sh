@@ -17,7 +17,7 @@ fi
 
 # install libs
 
-sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential
+sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential phantomjs
 
 # use easy install to get pip instead of apt-get so we get
 # a recent version instead of whatever ubuntu has
