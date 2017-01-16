@@ -95,10 +95,13 @@ class TrousersTests(unittest.TestCase):
         msg = t.compose_github_comment("1", [
             "/home/ubuntu/artifacts/screenshots/a.jpg",
             "/home/ubuntu/artifacts/screenshots/b.jpg"
+            "/home/ubuntu/c.txt"            
         ])
         self.assertTrue("PR-1" in msg)
         self.assertTrue("screenshots/a.jpg" in msg)
         self.assertTrue("screenshots/b.jpg" in msg)
+        self.assertTrue("c.txt" in msg)
+        self.assertTrue("-automated message" in msg)
 
 
 if __name__ == '__main__':

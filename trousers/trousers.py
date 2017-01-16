@@ -131,8 +131,15 @@ class Trousers:
             pth = "PR-%s/%s \n" % (prnum, urllib.quote(os.path.relpath(artifact, ARTIFACTS_DIR)))
             return "[%s](%s/%s)" % (os.path.basename(artifact), pre, pth)
 
-        return "PR build results:\n> %s\n\n -automated message" % " • ".join([poke(a) for a in artifacts])
+        # TODO: Don't hardcode logic for deciding screenshots vs others.
+        
+        msg =  "PR build results:"
+        msg += "\nscreenshots > %s" % " • ".join([poke(a) for a in artifacts if "screenshots" in a])
+        msg += "\nother > %s" % " • ".join([poke(a) for a in artifacts if "screenshots" not in a])
+        msg += "\n\n -automated message"
 
+        return msg
+        
     def process_message(self, msg, bucket):
 
         """ process a message coming off the sqs queue """
