@@ -22,7 +22,7 @@
   lineinfile:
     dest: /etc/gu/install_vars
     regexp: '^STAGE='
-    line: 'STAGE=DEV'
+    line: 'STAGE=PROD'
     create: yes
   become: true
 
