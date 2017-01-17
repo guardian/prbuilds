@@ -17,13 +17,22 @@ fi
 
 # install libs
 
-sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential phantomjs
+sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential
 
 # use easy install to get pip instead of apt-get so we get
 # a recent version instead of whatever ubuntu has
 
 sudo easy_install pip
 sudo pip install virtualenv
+
+# install latest phantomjs (we want 2.1.1. as it fixes some bugs)
+
+if [[ "$(which phantomjs)" == "" ]]; then
+    cd /home/ubuntu
+    wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+    tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2
+    sudo ln phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
+fi
 
 # install python dependencies
 
