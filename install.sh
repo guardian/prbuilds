@@ -36,6 +36,8 @@ fi
 
 # install python dependencies
 
+cd $parent
+
 virtualenv venv
 source venv/bin/activate
 pip install -r trousers/requirements.txt

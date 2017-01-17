@@ -92,7 +92,7 @@
       chdir: /home/ubuntu/perftester
 
   - name: run exception checker
-    shell: bash /home/ubuntu/prbuilds/trousers/builtins/exceptions.js http://localhost:9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism > /home/ubuntu/artifacts/thrown-exceptions.txt
+    shell: /home/ubuntu/prbuilds/trousers/builtins/exceptions.js http://localhost:9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism > /home/ubuntu/artifacts/thrown-exceptions.txt
     
   always:
     
