@@ -9,11 +9,8 @@ allChecks = {
     "webpage"    : WebPageCheck()
 }
 
-"""
 default_host = "http://localhost:9000"
-"""
-
-default_host = "http://gu.com/uk"
+outside_host =
 
 class Directories:
     def __init__(self, root):
@@ -34,7 +31,7 @@ def run_all():
     results = []
     
     directories = Directories(
-        root="/Users/matthew_walls/code/space"
+        root="/home/ubuntu"
     )
 
     directories.check()

@@ -16,13 +16,10 @@ class WebPageCheck:
         """ Remove the last version """
 
         if os.path.isdir(os.path.join(directories.root, "single-page-performance-tester")):
-            print "removing directory"
             shutil.rmtree(os.path.join(directories.root, "single-page-performance-tester"))
         
         """ Clone the repo """
 
-        print "Cloning"
-        
         ps = subprocess.Popen(
             "git clone %s" % repo,
             shell=True,
