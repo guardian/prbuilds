@@ -122,7 +122,7 @@ class Trousers:
                 bucket
             )
 
-    def compose_github_comment(self, prnum, artifacts):
+    def compose_github_comment(self, prnum, artifacts=[], results=[]):
 
         """ format a nice github message """
 
@@ -135,6 +135,7 @@ class Trousers:
 
         return template.render(
             artifacts=artifacts,
+            results=results,
             poke=poke
         )
         
@@ -151,10 +152,12 @@ class Trousers:
                 msg.delete()
                 return
 
-            self.build(
+            self.set_up(
                 pr.cloneUrl,
                 pr.branch
             )
+
+            results = self.run_tests()
 
             facts = self.artifacts.collect(
                 ARTIFACTS_DIR
@@ -171,7 +174,8 @@ class Trousers:
                     pr.commentUrl,
                     self.compose_github_comment(
                         pr.prnum,
-                        facts
+                        facts,
+                        results
                     )
                 )
 
@@ -182,6 +186,11 @@ class Trousers:
             logging.error("PR Build failed")
             logging.error(err)
             logging.error(traceback.format_exc())
+
+        try:
+            self.tear_down()
+        except Exception as err:
+            logging.error("Teardown failed")
 	    
         msg.delete()            
 
@@ -193,13 +202,6 @@ class Trousers:
             for message in queue.receive_messages():
                 return message
             time.sleep(interval)
-
-    def build(self, repo, branch="master"):
-
-        """ Run the build script """
-        self.set_up(repo, branch)
-        self.test()
-        self.tear_down()
 
     def set_up(self, repo, branch):
 
@@ -214,7 +216,7 @@ class Trousers:
         if ret != 0:
             raise Exception("Ansible play did not exit zero")
 
-    def test(self):
+    def run_tests(self):
 
         """ run tests against a running app """
         
@@ -224,7 +226,7 @@ class Trousers:
 
         """ stop the running app and clean up """
 
-        ret = self.subprocess.call([
+        self.subprocess.call([
             "ansible-playbook",
             "cleanup.playbook.yml"
         ])        
