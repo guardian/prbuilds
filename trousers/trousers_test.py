@@ -81,14 +81,6 @@ class ArtifactServiceTests(unittest.TestCase):
         self.assertEqual(a.content_type("a"), "text/plain")
 
 class TrousersTests(unittest.TestCase):
-        
-    def test_build_calls_ansible(self):
-        t = Trousers()
-        p = MockSubprocess()
-        t.subprocess = p
-        t.build("repo", "hello")
-        self.assertEqual(p.lastArgs[0], "ansible-playbook")
-        self.assertEqual(p.lastArgs[3], "branch=hello clone_url=repo")
 
     def test_compose_github_comment(self):
         t = Trousers()
