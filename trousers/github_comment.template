@@ -1,0 +1,17 @@
+PR build results:
+
+screenshots
+{% for artifact in artifacts -%}
+{% if "screenshot" in artifact -%}
+{{poke(artifact)}}
+{% endif -%}
+{%endfor%}
+
+others
+{% for artifact in artifacts -%}
+{% if "screenshot" not in artifact -%}
+{{poke(artifact)}}
+{% endif -%}
+{%endfor%}
+    
+-automated message

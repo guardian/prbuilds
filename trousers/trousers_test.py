@@ -86,9 +86,12 @@ class TrousersTests(unittest.TestCase):
         t = Trousers()
         msg = t.compose_github_comment("1", [
             "/home/ubuntu/artifacts/screenshots/a.jpg",
-            "/home/ubuntu/artifacts/screenshots/b.jpg"
-            "/home/ubuntu/c.txt"            
+            "/home/ubuntu/artifacts/screenshots/b.jpg",
+            "/home/ubuntu/artifacts/c.txt"
         ])
+
+        print msg
+        
         self.assertTrue("PR-1" in msg)
         self.assertTrue("screenshots/a.jpg" in msg)
         self.assertTrue("screenshots/b.jpg" in msg)

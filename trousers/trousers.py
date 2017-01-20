@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=UTF-8
 
-import boto3, time, ansible, subprocess, json, requests, os, sys, urllib
+import boto3, time, ansible, subprocess, json, requests, os, sys, urllib, jinja2
 import traceback, logging, modules
 from requests.auth import HTTPBasicAuth
 
@@ -129,16 +129,14 @@ class Trousers:
         def poke(artifact):
             pre = "https://s3-eu-west-1.amazonaws.com/prbuilds"
             pth = "PR-%s/%s \n" % (prnum, urllib.quote(os.path.relpath(artifact, ARTIFACTS_DIR)))
-            return "[%s](%s/%s)" % (os.path.basename(artifact), pre, pth)
+            return "[%s](%s/%s)" % (os.path.basename(artifact), pre, pth.strip())
 
-        # TODO: Don't hardcode logic for deciding screenshots vs others.
-        
-        msg =  "PR build results:"
-        msg += "\nscreenshots > %s" % " • ".join([poke(a) for a in artifacts if "screenshots" in a])
-        msg += "\nother > %s" % " • ".join([poke(a) for a in artifacts if "screenshots" not in a])
-        msg += "\n\n -automated message"
+        template = jinja2.Template(open("github_comment.template").read())
 
-        return msg
+        return template.render(
+            artifacts=artifacts,
+            poke=poke
+        )
         
     def process_message(self, msg, bucket):
 
