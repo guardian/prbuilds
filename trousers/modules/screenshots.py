@@ -5,7 +5,7 @@ class ScreenshotsCheck:
     def run(self, host, directories):
         
         ps = subprocess.Popen(
-            ". ~/.nvm/nvm.sh; nvm use; make screenshots",
+            'bash -c ". ~/.nvm/nvm.sh; nvm use; make screenshots"',
             shell=True,
             stdout=subprocess.PIPE,
             cwd=directories.workspace
