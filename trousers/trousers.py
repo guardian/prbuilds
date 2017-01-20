@@ -199,6 +199,11 @@ class Trousers:
     def build(self, repo, branch="master"):
 
         """ Run the build script """
+        self.set_up(repo, branch)
+        self.test()
+        self.tear_down()
+
+    def set_up(self, repo, branch):
 
         ret = self.subprocess.call([
             "ansible-playbook",
@@ -217,6 +222,15 @@ class Trousers:
         
         modules.run_all()
 
+    def tear_down(self):
+
+        """ stop the running app and clean up """
+
+        ret = self.subprocess.call([
+            "ansible-playbook",
+            "cleanup.playbook.yml"
+        ])        
+        
 if __name__ == '__main__':
 
     # check environment variables existed
