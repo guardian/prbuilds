@@ -43,5 +43,4 @@ goes wrong.
 ## Ongoing work
 
 * Scala rewrite for RiffRaff deployability
-* Better modularisation of the tests to be ran
 * Remove hardcoding for the Guardian frontend
