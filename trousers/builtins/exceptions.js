@@ -40,6 +40,7 @@ page.open(uri, function (status) {
     
     if (status !== 'success') {
         console.log('Failed to load uri');
+        phantom.exit();
     } else {
         window.setTimeout(function () { printResults(); phantom.exit(); }, 9000);
     }

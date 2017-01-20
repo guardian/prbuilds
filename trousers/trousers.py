@@ -2,7 +2,7 @@
 # coding=UTF-8
 
 import boto3, time, ansible, subprocess, json, requests, os, sys, urllib
-import traceback, logging
+import traceback, logging, modules
 from requests.auth import HTTPBasicAuth
 
 ARTIFACTS_DIR = '/home/ubuntu/artifacts'
@@ -211,6 +211,11 @@ class Trousers:
         if ret != 0:
             raise Exception("Ansible play did not exit zero")
 
+    def test(self):
+
+        """ run tests against a running app """
+        
+        modules.run_all()
 
 if __name__ == '__main__':
 
