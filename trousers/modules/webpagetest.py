@@ -8,7 +8,7 @@ class WebPageCheck:
         """ run the built-in script """
 
         ps = subprocess.Popen(
-            "webpagetest.sh",
+            "./webpagetest.sh",
             shell=True,
             stdout=subprocess.PIPE,
             cwd=directories.builtins
