@@ -10,7 +10,6 @@ allChecks = {
 }
 
 default_host = "http://localhost:9000"
-outside_host =
 
 class Directories:
     def __init__(self, root):
