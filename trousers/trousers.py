@@ -220,7 +220,7 @@ class Trousers:
 
         """ run tests against a running app """
         
-        modules.run_all()
+        return modules.run_all()
 
     def tear_down(self):
 

@@ -84,11 +84,16 @@ class TrousersTests(unittest.TestCase):
 
     def test_compose_github_comment(self):
         t = Trousers()
-        msg = t.compose_github_comment("1", [
-            "/home/ubuntu/artifacts/screenshots/a.jpg",
-            "/home/ubuntu/artifacts/screenshots/b.jpg",
-            "/home/ubuntu/artifacts/c.txt"
-        ])
+        
+        msg = t.compose_github_comment("1",[
+                "/home/ubuntu/artifacts/screenshots/a.jpg",
+                "/home/ubuntu/artifacts/screenshots/b.jpg",
+                "/home/ubuntu/artifacts/c.txt"
+            ],{
+                "screenshots": {"return code": 0, "raw_output": "picard"},
+                "exceptions": {"return code": 0, "raw_output": "riker"}
+            }
+        )
 
         print msg
         

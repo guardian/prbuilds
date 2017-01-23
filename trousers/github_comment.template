@@ -1,5 +1,10 @@
 PR build results:
 
+results:
+{% for name, result in results.items() -%}
+{{name}} {{result}}
+{% endfor %}
+    
 screenshots
 {% for artifact in artifacts -%}
 {% if "screenshot" in artifact -%}

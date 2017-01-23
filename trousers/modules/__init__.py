@@ -27,7 +27,7 @@ class Directories:
         
 def run_all():
     
-    results = []
+    results = {}
     
     directories = Directories(
         root="/home/ubuntu"
@@ -38,8 +38,6 @@ def run_all():
     for k, v in allChecks.items():
         
         print "Running %s" % k
-        
-        result = v.run(default_host, directories)
-        results.append(result)
+        results[k] = v.run(default_host, directories)
         
     return results
