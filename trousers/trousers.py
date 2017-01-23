@@ -126,7 +126,7 @@ class Trousers:
 
         """ format a nice github message """
 
-        def poke(artifact):
+        def link(artifact):
             pre = "https://s3-eu-west-1.amazonaws.com/prbuilds"
             pth = "PR-%s/%s \n" % (prnum, urllib.quote(os.path.relpath(artifact, ARTIFACTS_DIR)))
             return "[%s](%s/%s)" % (os.path.basename(artifact), pre, pth.strip())
@@ -136,7 +136,7 @@ class Trousers:
         return template.render(
             artifacts=artifacts,
             results=results,
-            poke=poke
+            link=link
         )
         
     def process_message(self, msg, bucket):

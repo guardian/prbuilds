@@ -91,7 +91,7 @@ class TrousersTests(unittest.TestCase):
                 "/home/ubuntu/artifacts/c.txt"
             ],{
                 "screenshots": {"return code": 0, "raw_output": "picard"},
-                "exceptions": {"return code": 0, "raw_output": "riker"}
+                "exceptions": {"return code": 0, "raw_output": "EXCEPTION"}
             }
         )
 

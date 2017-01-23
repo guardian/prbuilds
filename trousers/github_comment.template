@@ -8,14 +8,17 @@ results:
 screenshots
 {% for artifact in artifacts -%}
 {% if "screenshot" in artifact -%}
-{{poke(artifact)}}
+{{link(artifact)}}
 {% endif -%}
 {%endfor%}
+
+exceptions
+{{ results["exceptions"]["raw_output"].count("EXCEPTION") }}
 
 others
 {% for artifact in artifacts -%}
 {% if "screenshot" not in artifact -%}
-{{poke(artifact)}}
+{{link(artifact)}}
 {% endif -%}
 {%endfor%}
     
