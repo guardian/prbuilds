@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding=UTF-8
+# -*- coding: utf-8 -*-
 
 import boto3, time, ansible, subprocess, json, requests, os, sys, urllib, jinja2
 import traceback, logging, modules
@@ -125,18 +125,24 @@ class Trousers:
     def compose_github_comment(self, prnum, artifacts=[], results=[]):
 
         """ format a nice github message """
-
+        
         def link(artifact):
             pre = "https://s3-eu-west-1.amazonaws.com/prbuilds"
             pth = "PR-%s/%s \n" % (prnum, urllib.quote(os.path.relpath(artifact, ARTIFACTS_DIR)))
             return "[%s](%s/%s)" % (os.path.basename(artifact), pre, pth.strip())
 
-        template = jinja2.Template(open("github_comment.template").read())
+        def links_for(test):
+            return [link(f) for f in artifacts if test in f]
+        
+        template = jinja2.Template(
+            open("github_comment.template").read().decode("utf-8")
+        )
 
         return template.render(
             artifacts=artifacts,
             results=results,
-            link=link
+            link=link,
+            links_for=links_for
         )
         
     def process_message(self, msg, bucket):

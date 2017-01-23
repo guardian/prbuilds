@@ -1,25 +1,12 @@
 PR build results:
 
-results:
-{% for name, result in results.items() -%}
-{{name}} {{result}}
-{% endfor %}
-    
 screenshots
-{% for artifact in artifacts -%}
-{% if "screenshot" in artifact -%}
-{{link(artifact)}}
-{% endif -%}
-{%endfor%}
+{{ " • ".join(links_for("screenshot")) }}
+    
+exceptions ({{ results["exceptions"]["raw_output"].count("EXCEPTION") }})
+{{ " • ".join(links_for("thrown-exception")) }}    
 
-exceptions
-{{ results["exceptions"]["raw_output"].count("EXCEPTION") }}
-
-others
-{% for artifact in artifacts -%}
-{% if "screenshot" not in artifact -%}
-{{link(artifact)}}
-{% endif -%}
-{%endfor%}
+webpagetest results
+{{ " • ".join(links_for("performanceComparisonSummary")) }}
     
 -automated message

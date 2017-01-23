@@ -88,7 +88,8 @@ class TrousersTests(unittest.TestCase):
         msg = t.compose_github_comment("1",[
                 "/home/ubuntu/artifacts/screenshots/a.jpg",
                 "/home/ubuntu/artifacts/screenshots/b.jpg",
-                "/home/ubuntu/artifacts/c.txt"
+                "/home/ubuntu/artifacts/thrown-exceptions.txt",            
+                "/home/ubuntu/artifacts/performanceComparisonSummary.txt"
             ],{
                 "screenshots": {"return code": 0, "raw_output": "picard"},
                 "exceptions": {"return code": 0, "raw_output": "EXCEPTION"}
@@ -100,7 +101,7 @@ class TrousersTests(unittest.TestCase):
         self.assertTrue("PR-1" in msg)
         self.assertTrue("screenshots/a.jpg" in msg)
         self.assertTrue("screenshots/b.jpg" in msg)
-        self.assertTrue("c.txt" in msg)
+        self.assertTrue("thrown-exceptions.txt" in msg)        
         self.assertTrue("-automated message" in msg)
 
 
