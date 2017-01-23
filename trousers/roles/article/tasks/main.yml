@@ -18,11 +18,11 @@
     force: yes
     version: "{{branch}}"
 
-- name: set to devinfra
+- name: set environment
   lineinfile:
     dest: /etc/gu/install_vars
     regexp: '^STAGE='
-    line: 'STAGE=PROD'
+    line: 'STAGE=DEV'
     create: yes
   become: true
 
