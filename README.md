@@ -6,8 +6,8 @@ builds pushed code. The twist is that it is designed to fully run the app under 
 and then perform runtime regression testing against the live app, the results of which
 are stamped onto the Pull Request.
 
-This is a proof of concept system, and is implemented as a small amount of glue code
-around the Ansible provisioning tool.
+This is a proof of concept system, and is implemented as a ~~small~~ moderate amount of 
+glue code around the Ansible provisioning tool.
 
 ## Implementation
 
@@ -32,6 +32,14 @@ The Queue-based architecture was chosen because it means the system can be scale
 from a single worker instance to many, and ensures that the workload persists if something
 goes wrong.
 
+## Supported Checks
+
+PRBuilds supports the following checks to be ran against the app under test
+
+* Screenshots (frontend only right now)
+* Exceptions (grabs all Javascript exceptions thrown when visiting a given url)
+* WebPageTest (grabs latency, page weight and timing information for a given url)
+
 ## Cloud Deployment
 
 * CloudFormation template included
@@ -43,4 +51,5 @@ goes wrong.
 ## Ongoing work
 
 * Scala rewrite for RiffRaff deployability
-* Remove hardcoding for the Guardian frontend
+* Decouple from the Guardian frontend repo
+* Robustness (error recovery, dummy ELB for healthchecks, etc)
