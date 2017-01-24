@@ -15,6 +15,17 @@ if [[ "$HOME" == "" ]]; then
     export HOME=/home/ubuntu
 fi
 
+# If we have aws credentials in the environment, copy them into the
+# aws profile. This is to workaround an annoyance with running frontend
+# inside of docker (frontend refuses to load credentials from the env,
+# so you have to have an aws profile to run it in Docker outside of aws)
+
+if [[ "$AWS_ACCESS_KEY_ID" != "" ]]; then
+    aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile frontend
+    aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile frontend
+    aws configure set aws_session_token $AWS_SESSION_TOKEN --profile frontend
+fi
+
 # install libs
 
 sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential
@@ -53,3 +64,8 @@ echo "Launching trousers"
 
 cd $parent/trousers
 screen -d -L -m python trousers.py
+
+if [[ "$1" == "-block" ]]; then
+    echo "Blocking until killed"
+    bash
+fi

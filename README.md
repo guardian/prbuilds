@@ -9,7 +9,7 @@ are stamped onto the Pull Request.
 This is a proof of concept system, and is implemented as a ~~small~~ moderate amount of 
 glue code around the Ansible provisioning tool.
 
-## Implementation
+## Architecture
 
 PR Builds is made up of two main components:
 
@@ -39,6 +39,27 @@ PRBuilds supports the following checks to be ran against the app under test
 * Screenshots (frontend only right now)
 * Exceptions (grabs all Javascript exceptions thrown when visiting a given url)
 * WebPageTest (grabs latency, page weight and timing information for a given url)
+
+## Docker
+
+A Dockerfile is provided to assist with local testing of the app. Note that you will need
+to have AWS environment variables (AWS_ACCESS_KEY_ID etc) populated locally before you
+run the Docker instance to allow the frontend repo to run.
+
+To build the image:
+
+    docker build -t prbuilds .
+
+To run the built image:
+
+    docker run -dit \
+    -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+    -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+    -e GH_NAME=MatthewJWalls \
+    -e GH_TOKEN=<github token> \
+    -e QUEUE_NAME=trousers_test \
+    prbuilds
 
 ## Cloud Deployment
 
