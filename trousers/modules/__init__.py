@@ -4,9 +4,9 @@ from .webpagetest import WebPageCheck
 from os import path
 
 allChecks = {
-    "sceenshots" : ScreenshotsCheck(),
-    "exceptions" : ExceptionsCheck(),
-    "webpage"    : WebPageCheck()
+    "sceenshots"  : ScreenshotsCheck(),
+    "exceptions"  : ExceptionsCheck(),
+    "webpagetest" : WebPageCheck()
 }
 
 default_host = "http://localhost:9000"

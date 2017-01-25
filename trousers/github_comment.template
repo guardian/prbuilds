@@ -6,7 +6,7 @@ screenshots
 exceptions ({{ results["exceptions"]["raw_output"].count("EXCEPTION") }})
 {{ " • ".join(links_for("thrown-exception")) }}    
 
-webpagetest results
+webpagetest ({{ results["webpagetest"]["raw_output"].count("Warning") }})
 {{ " • ".join(links_for("performanceComparisonSummary")) }}
-    
+
 -automated message

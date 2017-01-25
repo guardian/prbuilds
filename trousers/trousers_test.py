@@ -92,7 +92,8 @@ class TrousersTests(unittest.TestCase):
                 "/home/ubuntu/artifacts/performanceComparisonSummary.txt"
             ],{
                 "screenshots": {"return code": 0, "raw_output": "picard"},
-                "exceptions": {"return code": 0, "raw_output": "EXCEPTION"}
+                "exceptions": {"return code": 0, "raw_output": "EXCEPTION"},
+                "webpagetest": {"return code": 0, "raw_output": "WarningWarning"}
             }
         )
 
