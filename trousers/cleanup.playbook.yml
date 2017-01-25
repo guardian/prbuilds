@@ -1,5 +1,7 @@
 ---
 - hosts: localhost
-  roles:
-    - clean
+  tasks:
+    - name: kill the application
+      command: screen -S trousers-build -X quit
+    
     

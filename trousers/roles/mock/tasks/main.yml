@@ -1,6 +1,0 @@
----
-- name: who am I ???
-  command: hostname
-
-- name: echo some stuff
-  command: echo branch was {{ branch }}
