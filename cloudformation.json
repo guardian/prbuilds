@@ -195,7 +195,9 @@
     "ASLC1HDK6": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
-        "ImageId": "ami-d75f22a4",
+        "ImageId": {
+          "Ref": "AMIParameter"
+        },
         "InstanceType": "t2.medium",
         "AssociatePublicIpAddress": true,
         "IamInstanceProfile": {
@@ -312,6 +314,10 @@
     }
   },
   "Parameters": {
+    "AMIParameter": {
+        "Description": "AMI to use",
+        "Type": "String"
+    },
     "SubnetsParameter": {
       "Description": "VPC Subnet",
       "Type": "List<AWS::EC2::Subnet::Id>"
