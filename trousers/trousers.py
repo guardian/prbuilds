@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import boto3, os, sys
+from trouserlib.trousers import Trousers
 
-ARTIFACTS_DIR = '/home/ubuntu/artifacts'
 BUCKET_NAME = 'prbuilds'
 GH_NAME = os.getenv('GH_NAME', '')
 GH_TOKEN = os.getenv('GH_TOKEN', '')

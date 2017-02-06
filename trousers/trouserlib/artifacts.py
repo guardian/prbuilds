@@ -1,6 +1,8 @@
 
 import os
 
+ARTIFACTS_DIR = '/home/ubuntu/artifacts'
+
 class ArtifactService:
 
     def collect(self, directory):

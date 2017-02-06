@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
 import unittest, json, boto3, os
-from trousers import Trousers, PullRequest, GitHubService, ArtifactService
+
+from trouserlib.trousers import Trousers
+from trouserlib.artifacts import ArtifactService
+from trouserlib.pullrequest import PullRequest
+from trouserlib.github import GitHubService
 
 class MockSubprocess:
     def call(self, args):
@@ -31,7 +35,7 @@ class MockBucket:
 class GitHubServiceTests(unittest.TestCase):
 
     def test_post_comment(self):
-        s = GitHubService()
+        s = GitHubService("name", "token")
         r = MockRequests()
         s.requests = r
         s.post_comment("url", "payload")
@@ -39,7 +43,7 @@ class GitHubServiceTests(unittest.TestCase):
         self.assertTrue("payload" in r.lastData)
 
     def test_has_comment(self):
-        s = GitHubService()
+        s = GitHubService("name", "token")
         self.assertTrue(
             s.has_comment(
                 "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
@@ -48,14 +52,15 @@ class GitHubServiceTests(unittest.TestCase):
         )
 
     def test_has_no_comment(self):
-        s = GitHubService()
+        s = GitHubService("name", "token")
         self.assertFalse(
             s.has_comment(
                 "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
                 "WoooWooooowoowoww"
             )
         )
-        
+
+
 class PullRequestTests(unittest.TestCase):
 
     def test_fields(self):
@@ -66,6 +71,7 @@ class PullRequestTests(unittest.TestCase):
         self.assertTrue("dotfiles" in pull.commentUrl)
         self.assertEqual(pull.prnum, 1)
 
+        
 class ArtifactServiceTests(unittest.TestCase):
 
     def test_collect(self):
@@ -80,10 +86,11 @@ class ArtifactServiceTests(unittest.TestCase):
         self.assertEqual(a.content_type("a.txt"), "text/plain")
         self.assertEqual(a.content_type("a"), "text/plain")
 
+        
 class TrousersTests(unittest.TestCase):
 
     def test_compose_github_comment(self):
-        t = Trousers()
+        t = Trousers("name", "token")
         
         msg = t.compose_github_comment("1",[
                 "/home/ubuntu/artifacts/screenshots/a.jpg",

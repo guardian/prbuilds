@@ -5,6 +5,8 @@ from .pullrequest import PullRequest
 from .github import GitHubService
 from .artifacts import ArtifactService
 
+ARTIFACTS_DIR = '/home/ubuntu/artifacts'
+
 class Trousers:
 
     def __init__(self, ghName, ghToken):
@@ -12,8 +14,8 @@ class Trousers:
         """ constructor """
 
         self.subprocess = subprocess
-        self.github = GitHubService()
-        self.artifacts = ArtifactService(ghName, ghToken)
+        self.github = GitHubService(ghName, ghToken)
+        self.artifacts = ArtifactService()
         
     def start(self, queue, bucket):
 
