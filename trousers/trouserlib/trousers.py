@@ -1,85 +1,14 @@
 
-import os, time, subprocess, urllib, jinja2, traceback, logging, modules
+import traceback, logging
 
+from .runner import Runner
+from .reporter import Reporter
+from .sqs import Listener
 from .pullrequest import PullRequest
 from .github import GitHubService
 from .artifacts import ArtifactService
 
-ARTIFACTS_DIR = '/home/ubuntu/artifacts'
-
-def pushes_only(pr):
-    return pr.action in ["opened", "synchronize"]
-
-class Listener:
-
-    def receive(self, queue, filt=pushes_only, interval=5):
-
-        """ Wait for an SQS message and then return it """
-    
-        while True:
-            for message in queue.receive_messages():
-                if filt(message):
-                    return message
-            time.sleep(interval)
-            
-class Runner:
-
-    def __enter__(self, repo, branch):
-
-        """ set up the running app via an ansible play """
-        
-        ret = self.subprocess.call([
-            "ansible-playbook",
-            "build.playbook.yml",
-            "--extra-vars",
-            "branch=%s clone_url=%s" % (branch, repo),
-            "-v"
-        ])
-
-        if ret != 0:
-            raise Exception("Ansible play did not exit zero")
-
-        return self
-
-    def run_tests(self):
-
-        """ run tests against a running app """
-        
-        return modules.run_all()
-
-    def __exit__(self, type, value, traceback):
-
-        """ stop the running app and clean up """
-
-        self.subprocess.call([
-            "ansible-playbook",
-            "cleanup.playbook.yml"
-        ])        
-
-class Reporter:
-
-    def compose_github_comment(self, prnum, artifacts=[], results=[]):
-
-        """ format a nice github message """
-        
-        def link(artifact):
-            pre = "https://s3-eu-west-1.amazonaws.com/prbuilds"
-            pth = "PR-%s/%s \n" % (prnum, urllib.quote(os.path.relpath(artifact, ARTIFACTS_DIR)))
-            return "[%s](%s/%s)" % (os.path.basename(artifact), pre, pth.strip())
-
-        def links_for(test):
-            return [link(f) for f in artifacts if test in f]
-        
-        template = jinja2.Template(
-            open("github_comment.template").read().decode("utf-8")
-        )
-
-        return template.render(
-            artifacts=artifacts,
-            results=results,
-            link=link,
-            links_for=links_for
-        )
+ARTIFACTS_DIR = '/home/ubuntu/artifacts'            
     
 class Trousers:
 
