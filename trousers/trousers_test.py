@@ -31,7 +31,6 @@ class MockBucket:
         self.dest = dest
         self.args = ExtraArgs
 
-
 class GitHubServiceTests(unittest.TestCase):
 
     def test_post_comment(self):

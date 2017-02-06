@@ -16,12 +16,12 @@ class ArtifactService:
 
         return facts
 
-    def content_type(self, path):
+    def content_type(self, path, default="text/plain"):
         return {
             "jpg": "image/jpeg",
             "png": "image/png",
             "text": "text/plain"
-        }.get(path.split(".")[-1], "text/plain")
+        }.get(path.split(".")[-1], default)
     
     def upload(self, bucket, prefix, artifacts):
 
