@@ -89,9 +89,12 @@ class ArtifactServiceTests(unittest.TestCase):
 class TrousersTests(unittest.TestCase):
 
     def test_compose_github_comment(self):
-        t = Trousers("name", "token")
+
+        from trouserlib.trousers import Reporter
+
+        r = Reporter()
         
-        msg = t.compose_github_comment("1",[
+        msg = r.compose_github_comment("1",[
                 "/home/ubuntu/artifacts/screenshots/a.jpg",
                 "/home/ubuntu/artifacts/screenshots/b.jpg",
                 "/home/ubuntu/artifacts/thrown-exceptions.txt",            

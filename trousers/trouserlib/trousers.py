@@ -7,25 +7,56 @@ from .artifacts import ArtifactService
 
 ARTIFACTS_DIR = '/home/ubuntu/artifacts'
 
-class Trousers:
+def pushes_only(pr):
+    return pr.action in ["opened", "synchronize"]
 
-    def __init__(self, ghName, ghToken):
+class Listener:
 
-        """ constructor """
+    def receive(self, queue, filt=pushes_only, interval=5):
 
-        self.subprocess = subprocess
-        self.github = GitHubService(ghName, ghToken)
-        self.artifacts = ArtifactService()
-        
-    def start(self, queue, bucket):
-
-        """ busy waiting loop """
-        
+        """ Wait for an SQS message and then return it """
+    
         while True:
-            self.process_message(
-                self.receive(queue, 2),
-                bucket
-            )
+            for message in queue.receive_messages():
+                if filt(message):
+                    return message
+            time.sleep(interval)
+            
+class Runner:
+
+    def __enter__(self, repo, branch):
+
+        """ set up the running app via an ansible play """
+        
+        ret = self.subprocess.call([
+            "ansible-playbook",
+            "build.playbook.yml",
+            "--extra-vars",
+            "branch=%s clone_url=%s" % (branch, repo),
+            "-v"
+        ])
+
+        if ret != 0:
+            raise Exception("Ansible play did not exit zero")
+
+        return self
+
+    def run_tests(self):
+
+        """ run tests against a running app """
+        
+        return modules.run_all()
+
+    def __exit__(self, type, value, traceback):
+
+        """ stop the running app and clean up """
+
+        self.subprocess.call([
+            "ansible-playbook",
+            "cleanup.playbook.yml"
+        ])        
+
+class Reporter:
 
     def compose_github_comment(self, prnum, artifacts=[], results=[]):
 
@@ -49,95 +80,57 @@ class Trousers:
             link=link,
             links_for=links_for
         )
+    
+class Trousers:
+
+    def __init__(self, ghName, ghToken):
+
+        """ constructor """
+
+        self.subprocess = subprocess
+        self.github = GitHubService(ghName, ghToken)
+        self.artifacts = ArtifactService()
+
+    def start(self, queue, bucket):
+
+        """ trousers main processor """
         
-    def process_message(self, msg, bucket):
+        listener = Listener()
+        runner   = Runner()
+        reporter = Reporter()
 
-        """ process a message coming off the sqs queue """
-        
-        try:
+        while True:
+            
+            msg = listener.receive(queue)
+            prs = PullRequest(msg.body)
+            
+            try:
 
-            pr = PullRequest(msg.body)
+                with Runner(pr.cloneUrl, pr.branch) as runner:
 
-            if pr.action not in ["opened", "synchronize"]:
-                print "PR not being opened/pushed to. Ignoring"
-                msg.delete()
-                return
+                    results = runner.run_tests()
+                    facts = self.artifacts.collect(ARTIFACTS_DIR)
 
-            self.set_up(
-                pr.cloneUrl,
-                pr.branch
-            )
-
-            results = self.run_tests()
-
-            facts = self.artifacts.collect(
-                ARTIFACTS_DIR
-            )
-
-            self.artifacts.upload(
-                bucket,
-                "PR-%s" % pr.prnum,
-                facts
-            )
-
-            if not self.github.has_comment(pr.commentUrl, "-automated message"):
-                self.github.post_comment(
-                    pr.commentUrl,
-                    self.compose_github_comment(
+                    self.artifacts.upload(bucket, "PR-%s" % pr.prnum, facts)
+                    
+                    comment = reporter.compose_github_comment(
                         pr.prnum,
                         facts,
                         results
                     )
-                )
+                    
+                    self.github.update_comment(
+                        pr.commentUrl,
+                        comment,
+                        "-automated message"
+                    )
 
-            print "PR Build %s success" % pr.prnum
+            except Exception as err:
 
-        except Exception as err:
+                logging.error("PR Build failed")
+                logging.error(err)
+                logging.error(traceback.format_exc())
 
-            logging.error("PR Build failed")
-            logging.error(err)
-            logging.error(traceback.format_exc())
+            print "PR Build %s success" % pr.prnum                
 
-        try:
-            self.tear_down()
-        except Exception as err:
-            logging.error("Teardown failed")
-	    
-        msg.delete()            
-
-    def receive(self, queue, interval=5):
-
-        """ Wait for an SQS message and then return it """
-    
-        while True:
-            for message in queue.receive_messages():
-                return message
-            time.sleep(interval)
-
-    def set_up(self, repo, branch):
-
-        ret = self.subprocess.call([
-            "ansible-playbook",
-            "build.playbook.yml",
-            "--extra-vars",
-            "branch=%s clone_url=%s" % (branch, repo),
-            "-v"
-        ])
-
-        if ret != 0:
-            raise Exception("Ansible play did not exit zero")
-
-    def run_tests(self):
-
-        """ run tests against a running app """
-        
-        return modules.run_all()
-
-    def tear_down(self):
-
-        """ stop the running app and clean up """
-
-        self.subprocess.call([
-            "ansible-playbook",
-            "cleanup.playbook.yml"
-        ])        
+            msg.delete()                    

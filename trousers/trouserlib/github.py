@@ -25,7 +25,17 @@ class GitHubService:
                 return True
 
         return False
-        
+
+    def update_comment(self, url, body, test):
+
+        """ Add github comment only if it doesn't exist """
+
+        if not self.has_comment(url, test):
+            self.post_comment(url, body)
+            return True
+
+        return False
+    
     def post_comment(self, url, body):
 
         """ Add github comment using url endpoint """
