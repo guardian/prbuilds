@@ -24,7 +24,28 @@ class Directories:
         assert path.isdir(self.prbuilds)
         assert path.isdir(self.artifacts)
         assert path.isdir(self.builtins)        
+
+def run_with_config(chkConfig):
+
+    results = {}
+    
+    directories = Directories(
+        root="/home/ubuntu"
+    )
+
+    directories.check()
+    
+    for k, v in chkConfig.items():
         
+        print "Running %s" % k
+        
+        results[k] = allChecks[k].run(
+            default_host,
+            directories
+        )
+        
+    return results
+
 def run_all():
     
     results = {}
@@ -35,8 +56,7 @@ def run_all():
 
     directories.check()
     
-    for k, v in allChecks.items():
-        
+    for k, v in allChecks.items():        
         print "Running %s" % k
         results[k] = v.run(default_host, directories)
         

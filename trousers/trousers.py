@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import boto3, os, sys
+import boto3, yaml, os, sys
 from trouserlib.trousers import Trousers
 
 BUCKET_NAME = 'prbuilds'
@@ -28,12 +28,19 @@ if __name__ == '__main__':
     
     sqs = session.resource('sqs')
     s3 = session.resource('s3')
+
+    # read up the config
+    # TODO: config will be inside the repo in the future and found
+    # by the trousers processor itself.
+    
+    config = yaml.load(open("config.yml").read())
     
     # launch trousers
     
     trousers = Trousers(
         GH_NAME,
-        GH_TOKEN
+        GH_TOKEN,
+        config
     )
 
     print "Starting trousers on queue %s" % QUEUE_NAME

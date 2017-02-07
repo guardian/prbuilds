@@ -11,12 +11,13 @@ ARTIFACTS_DIR = '/home/ubuntu/artifacts'
     
 class Trousers:
 
-    def __init__(self, ghName, ghToken):
+    def __init__(self, ghName, ghToken, config):
 
         """ constructor """
 
         self.github = GitHubService(ghName, ghToken)
         self.artifacts = ArtifactService()
+        self.config = config
 
     def start(self, queue, bucket):
 
@@ -31,9 +32,10 @@ class Trousers:
             
             try:
 
-                with Runner(pr.cloneUrl, pr.branch) as runner:
+                with Runner(pr.cloneUrl, pr.branch, self.config["checks"]) as runner:
 
                     results = runner.run_tests()
+                    
                     facts = self.artifacts.collect(ARTIFACTS_DIR)
 
                     self.artifacts.upload(bucket, "PR-%s" % pr.prnum, facts)

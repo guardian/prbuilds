@@ -2,13 +2,14 @@ import subprocess, modules
 
 class Runner:
 
-    def __init__(self, repo, branch):
+    def __init__(self, repo, branch, config):
 
         """ Constructor """
 
         self.subprocess = subprocess
         self.repo = repo
         self.branch = branch
+        self.chkConfig = config
         
     def __enter__(self):
 
@@ -31,7 +32,7 @@ class Runner:
 
         """ run tests against a running app """
         
-        return modules.run_all()
+        return modules.run_with_config(self.chkConfig)
 
     def __exit__(self, type, value, traceback):
 
