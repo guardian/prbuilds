@@ -4,7 +4,6 @@ import traceback, logging
 from .runner import Runner
 from .reporter import Reporter
 from .sqs import Listener
-from .pullrequest import PullRequest
 from .github import GitHubService
 from .artifacts import ArtifactService
 
@@ -16,7 +15,6 @@ class Trousers:
 
         """ constructor """
 
-        self.subprocess = subprocess
         self.github = GitHubService(ghName, ghToken)
         self.artifacts = ArtifactService()
 
@@ -25,13 +23,11 @@ class Trousers:
         """ trousers main processor """
         
         listener = Listener()
-        runner   = Runner()
         reporter = Reporter()
 
         while True:
             
-            msg = listener.receive(queue)
-            prs = PullRequest(msg.body)
+            msg, pr = listener.receive(queue)
             
             try:
 
@@ -60,6 +56,6 @@ class Trousers:
                 logging.error(err)
                 logging.error(traceback.format_exc())
 
-            print "PR Build %s success" % pr.prnum                
-
-            msg.delete()                    
+            msg.delete()
+            
+            print "PR Build %s success" % pr.prnum

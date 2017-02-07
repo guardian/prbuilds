@@ -1,3 +1,7 @@
+
+from .pullrequest import PullRequest
+import time
+
 def pushes_only(pr):
     return pr.action in ["opened", "synchronize"]
 
@@ -9,6 +13,7 @@ class Listener:
     
         while True:
             for message in queue.receive_messages():
-                if filt(message):
-                    return message
+                pr = PullRequest(message.body)
+                if filt(pr):
+                    return (message, pr)
             time.sleep(interval)

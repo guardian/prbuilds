@@ -1,8 +1,16 @@
-import subprocess, jinja2, modules
+import subprocess, modules
 
 class Runner:
 
-    def __enter__(self, repo, branch):
+    def __init__(self, repo, branch):
+
+        """ Constructor """
+
+        self.subprocess = subprocess
+        self.repo = repo
+        self.branch = branch
+        
+    def __enter__(self):
 
         """ set up the running app via an ansible play """
         
@@ -10,7 +18,7 @@ class Runner:
             "ansible-playbook",
             "build.playbook.yml",
             "--extra-vars",
-            "branch=%s clone_url=%s" % (branch, repo),
+            "branch=%s clone_url=%s" % (self.branch, self.repo),
             "-v"
         ])
 
