@@ -4,7 +4,7 @@ from .webpagetest import WebPageCheck
 from os import path
 
 allChecks = {
-    "sceenshots"  : ScreenshotsCheck(),
+    "screenshots"  : ScreenshotsCheck(),
     "exceptions"  : ExceptionsCheck(),
     "webpagetest" : WebPageCheck()
 }
@@ -36,13 +36,12 @@ def run_with_config(chkConfig):
     directories.check()
     
     for k, v in chkConfig.items():
-        
-        print "Running %s" % k
-        
-        results[k] = allChecks[k].run(
-            default_host,
-            directories
-        )
+        if k in allChecks.keys():
+            print "Running %s" % k
+            results[k] = allChecks[k].run(
+                default_host,
+                directories
+            )
         
     return results
 

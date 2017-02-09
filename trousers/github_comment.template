@@ -1,12 +1,18 @@
 PR build results:
 
+{% if "screenshots" in results %}
 screenshots
 {{ " • ".join(links_for("screenshot")) }}
-    
+{% endif %}
+
+{% if "exceptions" in results %}
 exceptions ({{ results["exceptions"]["raw_output"].count("EXCEPTION") }})
 {{ " • ".join(links_for("thrown-exception")) }}    
+{% endif %}
 
+{% if "webpagetest" in results %}
 webpagetest ({{ results["webpagetest"]["raw_output"].count("Warning") }})
 {{ " • ".join(links_for("performanceComparisonSummary")) }}
+{% endif %}
 
 -automated message

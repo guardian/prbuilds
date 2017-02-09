@@ -1,8 +1,10 @@
 setup:
     ansible: build.playbook.yml
 checks:
-    screenshots: http://localhost:9000/uk
-    exceptions: http://localhost:9000/uk
+    screenshots:
+      url: http://localhost:9000/uk
+    exceptions:
+      url: http://localhost:9000/uk
 teardown:
     ansible: cleanup.playbook.yml
 reporting:
