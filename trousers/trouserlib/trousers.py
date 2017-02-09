@@ -32,7 +32,7 @@ class Trousers:
             
             try:
 
-                with Runner(pr.cloneUrl, pr.branch, self.config["checks"]) as runner:
+                with Runner(pr.cloneUrl, pr.branch, self.config) as runner:
 
                     results = runner.run_tests()
                     

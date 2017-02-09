@@ -14,10 +14,12 @@ class Runner:
     def __enter__(self):
 
         """ set up the running app via an ansible play """
+
+        playbook = self.chkConfig["setup"]["ansible"]
         
         ret = self.subprocess.call([
             "ansible-playbook",
-            "build.playbook.yml",
+            playbook,
             "--extra-vars",
             "branch=%s clone_url=%s" % (self.branch, self.repo),
             "-v"
@@ -32,13 +34,14 @@ class Runner:
 
         """ run tests against a running app """
         
-        return modules.run_with_config(self.chkConfig)
+        return modules.run_with_config(self.chkConfig["checks"])
 
     def __exit__(self, type, value, traceback):
 
         """ stop the running app and clean up """
 
+        playbook = self.chkConfig["teardown"]["ansible"]
+        
         self.subprocess.call([
-            "ansible-playbook",
-            "cleanup.playbook.yml"
+            "ansible-playbook", playbook
         ])        
