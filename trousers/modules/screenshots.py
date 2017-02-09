@@ -2,7 +2,7 @@ import subprocess, shutil, os
 
 class ScreenshotsCheck:
 
-    def run(self, host, directories):
+    def run(self, host, directories, params):
         
         ps = subprocess.Popen(
             'bash -c ". ~/.nvm/nvm.sh; nvm use; make screenshots"',

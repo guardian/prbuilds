@@ -13,8 +13,12 @@ if __name__ == '__main__':
 
     config = {
         "checks": {
-            "screenshots" : "something",
-            "exceptions" : "something"
+            "screenshots" : {
+                "url": "http://localhost:9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism"
+            },
+            "exceptions" : {
+                "url": "http://localhost:9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism"
+            }
         }
     }
     

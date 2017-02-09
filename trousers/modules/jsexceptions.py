@@ -7,17 +7,14 @@ class ExceptionsCheck:
 
         """ constructor """
 
-        self.path = "/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism"
         self.out  = "thrown-exceptions.txt"
     
-    def run(self, host, directories):
+    def run(self, host, directories, params):
 
         """ run exceptions checker test """
 
-        url  = "%s%s" % (host, self.path)        
-
         ps = subprocess.Popen(
-            "phantomjs exceptions.js %s" % (url),
+            "phantomjs exceptions.js %s" % (params["url"]),
             shell=True,
             stdout=subprocess.PIPE,
             cwd=directories.builtins

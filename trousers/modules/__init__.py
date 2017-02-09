@@ -40,7 +40,8 @@ def run_with_config(chkConfig):
             print "Running %s" % k
             results[k] = allChecks[k].run(
                 default_host,
-                directories
+                directories,
+                params=v
             )
         
     return results
