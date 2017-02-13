@@ -65,10 +65,10 @@ class PullRequestTests(unittest.TestCase):
     def test_fields(self):
         mock = open("data/gh_pull.mock").read()
         pull = PullRequest(mock)
-        self.assertEqual(pull.branch, "overridable-devinfra")
-        self.assertTrue("dotfiles" in pull.cloneUrl)
-        self.assertTrue("dotfiles" in pull.commentUrl)
-        self.assertEqual(pull.prnum, 1)
+        self.assertEqual(pull.branch, "anotherpatch")
+        self.assertTrue("frontend" in pull.cloneUrl)
+        self.assertTrue("frontend" in pull.commentUrl)
+        self.assertEqual(pull.prnum, 2)
 
         
 class ArtifactServiceTests(unittest.TestCase):
