@@ -11,23 +11,10 @@ QUEUE_NAME = os.getenv('QUEUE_NAME', '')
 
 if __name__ == '__main__':
 
-    config = {
-        "setup" : { "ansible" : "build.playbook.yml" },
-        "teardown" : { "ansible" : "cleanup.playbook.yml" },        
-        "checks": {
-            "screenshots" : {
-                "url": "http://localhost:9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism"
-            },
-            "exceptions" : {
-                "url": "http://localhost:9000/books/2014/may/21/guardian-journalists-jonathan-freedland-ghaith-abdul-ahad-win-orwell-prize-journalism"
-            }
-        }
-    }
-    
     # launch trousers
     
     trousers = Trousers(
-        GH_NAME, GH_TOKEN, config
+        GH_NAME, GH_TOKEN
     )
 
     print "Starting trousers on queue %s" % QUEUE_NAME

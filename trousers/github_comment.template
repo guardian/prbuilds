@@ -7,7 +7,7 @@ screenshots
 
 {% if "exceptions" in results %}
 exceptions ({{ results["exceptions"]["raw_output"].count("EXCEPTION") }})
-{{ " • ".join(links_for("thrown-exception")) }}    
+{{ " • ".join(links_for("thrown-exception")) }}
 {% endif %}
 
 {% if "webpagetest" in results %}
