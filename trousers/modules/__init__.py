@@ -2,7 +2,7 @@
 from .screenshots import ScreenshotsCheck
 from .jsexceptions import ExceptionsCheck
 from .webpagetest import WebPageCheck
-from config import directories, defaultHost
+from config import directories
 
 allChecks = {
     "screenshots"  : ScreenshotsCheck(),
@@ -20,7 +20,6 @@ def run_with_config(chkConfig):
         if k in allChecks.keys():
             print "Running %s" % k
             results[k] = allChecks[k].run(
-                defaultHost,
                 directories,
                 params=v
             )

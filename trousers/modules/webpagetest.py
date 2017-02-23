@@ -3,7 +3,7 @@ import subprocess, shutil, os
 
 class WebPageCheck:
 
-    def run(self, host, directories, params):
+    def run(self, directories, params):
 
         """ run the built-in script """
 
@@ -13,7 +13,7 @@ class WebPageCheck:
             stdout=subprocess.PIPE,
             cwd=directories.builtins
         )
-        
+
         out, err = ps.communicate()
 
         content = open(
@@ -22,7 +22,7 @@ class WebPageCheck:
                 "performanceComparisonSummary.txt"
             )
         ).read()
-        
+
         return {
             "return_code": ps.returncode,
             "raw_output": content

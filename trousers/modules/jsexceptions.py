@@ -8,8 +8,8 @@ class ExceptionsCheck:
         """ constructor """
 
         self.out  = "thrown-exceptions.txt"
-    
-    def run(self, host, directories, params):
+
+    def run(self, directories, params):
 
         """ run exceptions checker test """
 

@@ -16,5 +16,4 @@ class Directories:
         assert path.isdir(self.builtins)
 
 root = "/home/ubuntu"
-defaultHost = "http://localhost:9000"
 directories = Directories(root)
