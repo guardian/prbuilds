@@ -1,4 +1,5 @@
 import subprocess, modules, yaml, logging, os, shutil
+from config import directories
 
 class Runner:
 
@@ -9,17 +10,12 @@ class Runner:
         self.subprocess = subprocess
         self.repo = repo
         self.branch = branch
-        self.WORKSPACE_NAME = "/home/ubuntu/workspace"
-        self.ARTIFACTS_DIR = '/home/ubuntu/artifacts'
 
-        if os.path.isdir(self.WORKSPACE_NAME):
-            shutil.rmtree(self.WORKSPACE_NAME)
-        
-        if os.path.isdir(self.ARTIFACTS_DIR):
-            shutil.rmtree(self.ARTIFACTS_DIR)
+        if os.path.isdir(directories.artifacts):
+            shutil.rmtree(directories.artifacts)
 
-        os.mkdir(self.ARTIFACTS_DIR)
-        
+        os.mkdir(directories.artifacts)
+
     def clone_repo(self, url):
 
         """ clone down the remote repo """
@@ -32,18 +28,18 @@ class Runner:
             "-b",
             self.branch,
             self.repo,
-            self.WORKSPACE_NAME
+            directories.workspace
         ])
 
         if ret != 0:
-            raise Exception("Failed to clone %s to %s" % (url, self.WORKSPACE_NAME))
+            raise Exception("Failed to clone %s to %s" % (url, directories.workspace))
 
     def get_config(self):
 
         """ return yaml configuration from the cloned repo """
 
-        location = "%s/.trousers/config.yml" % self.WORKSPACE_NAME
-        
+        location = "%s/.trousers/config.yml" % directories.workspace
+
         try:
             return yaml.load(open(location).read())
         except:
@@ -54,7 +50,7 @@ class Runner:
         """ run tests against a running app """
 
         logging.info("Running tests")
-        
+
         return modules.run_with_config(
             self.get_config()["checks"]
         )
@@ -69,7 +65,7 @@ class Runner:
 
         ret = self.subprocess.call([
             "ansible-playbook",
-            os.path.join(self.WORKSPACE_NAME, conf["setup"]["ansible"]),
+            os.path.join(directories.workspace, conf["setup"]["ansible"]),
             "--extra-vars",
             "branch=%s clone_url=%s" % (self.branch, self.repo),
             "-v"
@@ -85,7 +81,7 @@ class Runner:
         """ stop the running app and clean up """
         conf = self.get_config()
 
-        playbook = os.path.join(self.WORKSPACE_NAME, conf["teardown"]["ansible"])
+        playbook = os.path.join(directories.workspace, conf["teardown"]["ansible"])
 
         self.subprocess.call([
             "ansible-playbook", playbook
