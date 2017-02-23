@@ -1,7 +1,7 @@
 FROM java:openjdk-8
 
 RUN apt-get update
-RUN apt-get install -y sudo wget screen python-setuptools
+RUN apt-get install -y sudo wget screen python-setuptools vim
 RUN easy_install pip
 RUN pip install awscli
 RUN useradd -ms /bin/bash ubuntu
