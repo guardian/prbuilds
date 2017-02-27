@@ -17,3 +17,8 @@ class Directories:
 
 root = "/home/ubuntu"
 directories = Directories(root)
+
+healthcheckEndpoint = "/healthcheck"
+healthcheckPort = 9002
+
+maxBuildTimeSeconds = 40*60

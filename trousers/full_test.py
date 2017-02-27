@@ -12,7 +12,7 @@ QUEUE_NAME = os.getenv('QUEUE_NAME', '')
 if __name__ == '__main__':
 
     # launch trousers
-    
+
     trousers = Trousers(
         GH_NAME, GH_TOKEN
     )
@@ -24,7 +24,7 @@ if __name__ == '__main__':
             self.body = open("data/gh_pull.mock").read()
         def delete(self):
             pass
-    
+
     class MockQueue:
         def receive_messages(self):
             return [MockMessage()]
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     class MockBucket:
         def upload_file(self, localpath, key, ExtraArgs):
             pass
-        
+
     trousers.start(
         MockQueue(),
         MockBucket()

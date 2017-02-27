@@ -79,6 +79,7 @@ class Runner:
     def __exit__(self, type, value, traceback):
 
         """ stop the running app and clean up """
+
         conf = self.get_config()
 
         playbook = os.path.join(directories.workspace, conf["teardown"]["ansible"])
