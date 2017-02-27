@@ -20,19 +20,47 @@ class Runner:
 
         """ clone down the remote repo """
 
-        ret = self.subprocess.call([
-            "git",
-            "clone",
-            "--depth",
-            "1",
-            "-b",
-            self.branch,
-            self.repo,
-            directories.workspace
-        ])
+        if os.path.exists(directories.workspace):
 
-        if ret != 0:
-            raise Exception("Failed to clone %s to %s" % (url, directories.workspace))
+            # pull & reset
+
+            old = os.getcwd()
+            os.chdir(directories.workspace)
+
+            self.subprocess.call([
+                "git",
+                "fetch"
+            ])
+
+            ret = self.subprocess.call([
+                "git",
+                "reset",
+                "--hard",
+                "origin/%s" % self.branch
+            ])
+
+            os.chdir(old)
+
+            if ret != 0:
+                raise Exception("Failed to update git for %s" % self.branch)
+
+        else:
+
+            # fresh clone
+
+            ret = self.subprocess.call([
+                "git",
+                "clone",
+                "--depth",
+                "1",
+                "-b",
+                self.branch,
+                self.repo,
+                directories.workspace
+            ])
+
+            if ret != 0:
+                raise Exception("Failed to clone %s" % url)
 
     def get_config(self):
 
