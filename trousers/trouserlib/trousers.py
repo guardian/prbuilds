@@ -8,8 +8,6 @@ from .github import GitHubService
 from .artifacts import ArtifactService
 from .monitoring import MonitoringService
 
-ARTIFACTS_DIR = '/home/ubuntu/artifacts'
-
 class Trousers:
 
     def __init__(self, ghName, ghToken):
@@ -36,7 +34,7 @@ class Trousers:
 
             results = runner.run_tests()
 
-            facts = self.artifacts.collect(ARTIFACTS_DIR)
+            facts = self.artifacts.collect(config.directories.artifacts)
 
             self.artifacts.upload(bucket, "PR-%s" % pr.prnum, facts)
 
