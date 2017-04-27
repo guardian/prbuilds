@@ -1,12 +1,17 @@
 PR build results:
 
-screenshots
-{{ " • ".join(links_for("screenshot")) }}
-    
-exceptions ({{ results["exceptions"]["raw_output"].count("EXCEPTION") }})
-{{ " • ".join(links_for("thrown-exception")) }}    
+** Screenshots **
 
-webpagetest ({{ results["webpagetest"]["raw_output"].count("Warning") }})
+{{ " • ".join(links_for("screenshot")) }}
+
+** Exceptions ({{ results["exceptions"]["raw_output"].count("EXCEPTION") }}) **
+
+{{ " • ".join(links_for("thrown-exception")) }}
+
+** Webpagetest ({{ results["webpagetest"]["raw_output"].count("Warning") }}) **
+
 {{ " • ".join(links_for("performanceComparisonSummary")) }}
 
--automated message
+** Accessibility Report **
+
+{{ " • ".join(links_for("a11y-report")) }}

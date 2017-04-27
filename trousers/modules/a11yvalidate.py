@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 class A11yValidate:
@@ -12,6 +13,13 @@ class A11yValidate:
         )
 
         out, err = ps.communicate()
+
+        open(
+            os.path.join(
+                directories.artifacts,
+                "a11y-report.js"
+            ),"w"
+        ).write(out)
 
         return {
             "return_code": ps.returncode,
