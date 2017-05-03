@@ -38,6 +38,8 @@ class Trousers:
 
             self.artifacts.upload(bucket, "PR-%s" % pr.prnum, facts)
 
+            reporter = Reporter()
+            
             comment = reporter.compose_github_comment(
                 pr.prnum,
                 facts,
@@ -57,7 +59,6 @@ class Trousers:
         """ trousers main processor """
 
         listener = Listener()
-        reporter = Reporter()
 
         self.monitoring.monitor(self)
 
@@ -70,8 +71,15 @@ class Trousers:
 
             try:
                 self.process(pr, bucket)
-            except:
+            except Exception as e:
+
                 logging.warning("PR Build failed.")
+
+                self.github.update_comment(
+                    pr.commentUrl,
+                    "PRBuilds failed when building this PR: %s" % e,
+                    "PRBuilds failed"
+                )
 
             msg.delete()
 

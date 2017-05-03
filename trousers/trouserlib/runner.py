@@ -1,4 +1,5 @@
 import subprocess, modules, yaml, logging, os, shutil
+import traceback as tb
 from config import directories
 
 class Runner:
@@ -118,4 +119,6 @@ class Runner:
 
         if traceback:
             logging.error("PR Build failed")
-            logging.error(traceback)
+            logging.error(str(traceback))
+            logging.error(str(value))
+            tb.print_tb(traceback)
