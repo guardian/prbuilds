@@ -63,9 +63,12 @@ screen -d -L -m python ether.py
 echo "Launching trousers"
 
 cd $parent/trousers
-screen -d -L -m python trousers.py
 
-if [[ "$1" == "-block" ]]; then
-    echo "Blocking until killed"
-    bash
+if [[ "$1" == "-test" ]]; then
+    screen -d -L -m python full_test.py
+else
+    screen -d -L -m python trousers.py
 fi
+
+echo "Blocking until killed"
+bash

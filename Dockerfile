@@ -15,4 +15,4 @@ RUN chown ubuntu -R /home/ubuntu/prbuilds
 
 USER ubuntu
 WORKDIR /home/ubuntu/prbuilds
-CMD ["./install.sh", "-block"]
+CMD ["./install.sh", "-test"]
