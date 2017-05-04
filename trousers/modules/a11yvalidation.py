@@ -19,7 +19,7 @@ class A11YValidation:
         open(
             os.path.join(
                 directories.artifacts,
-                "a11y-results.txt"
+                "a11y-report.txt"
             ),"w"
         ).write(out)
 
