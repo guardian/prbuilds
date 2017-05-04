@@ -1,18 +1,21 @@
-PR build results:
+PRbuilds results:
 
 {% if "screenshots" in results %}
-screenshots
+**Screenshots**
 {{ " • ".join(links_for("screenshot")) }}
 {% endif %}
 
 {% if "exceptions" in results %}
-exceptions ({{ results["exceptions"]["raw_output"].count("EXCEPTION") }})
+**Exceptions** ({{ results["exceptions"]["raw_output"].count("EXCEPTION") }})
 {{ " • ".join(links_for("thrown-exception")) }}
 {% endif %}
 
 {% if "webpagetest" in results %}
-webpagetest ({{ results["webpagetest"]["raw_output"].count("Warning") }})
+**Webpagetest** ({{ results["webpagetest"]["raw_output"].count("Warning") }})
 {{ " • ".join(links_for("performanceComparisonSummary")) }}
 {% endif %}
 
--automated message
+{% if "a11yvalidation" in results %}
+**A11y validation** ({{ results["a11yvalidation"]["raw_output"].count("Error") }})
+{{ " • ".join(links_for("a11y-results")) }}
+{% endif %}
