@@ -2,12 +2,14 @@
 from .screenshots import ScreenshotsCheck
 from .jsexceptions import ExceptionsCheck
 from .webpagetest import WebPageCheck
+from .a11yvalidation import A11YValidation
 from config import directories
 
 allChecks = {
     "screenshots"  : ScreenshotsCheck(),
     "exceptions"  : ExceptionsCheck(),
-    "webpagetest" : WebPageCheck()
+    "webpagetest" : WebPageCheck(),
+    "a11yvalidation": A11YValidation(),
 }
 
 def run_with_config(chkConfig):
