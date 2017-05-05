@@ -69,6 +69,10 @@ To create a new kind of check for PRBuilds to run, you need to introduce a new c
 
 You also need to edit the trousers/github_comment.template to include your new test. The value returned from your run function will be passed to the template.
 
+If your check code is simple integrating with an external API over the internet, or invoking a task you expect to be present on the repository under test (such as a 'make' style command) then this should be all you need.
+
+If you would like to bundle a script or binary into PRBuilds that you want to execute as a check, you can place these static scripts/binaries into the trousers/builtins package, and then invoke them from your PRBuilds check (See the jsexceptions check - this uses a builtin phantomjs script)
+
 ## Cloud Deployment
 
 * CloudFormation template included
