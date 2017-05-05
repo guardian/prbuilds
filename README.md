@@ -40,7 +40,7 @@ PRBuilds supports the following checks to be ran against the app under test
 * Exceptions (grabs all Javascript exceptions thrown when visiting a given url)
 * WebPageTest (grabs latency, page weight and timing information for a given url)
 
-## Docker
+## Using Docker to test PRBuilds
 
 A Dockerfile is provided to assist with local testing of the app. Note that you will need
 to have AWS environment variables (AWS_ACCESS_KEY_ID etc) populated locally before you
@@ -61,6 +61,14 @@ To run the built image:
     -e QUEUE_NAME=trousers_test \
     prbuilds
 
+Once the container launches, it will automatically begin a test run against mock data. The mock data for this test run is currently contained in the trousers/data/gh_pull file. Be aware that PRBuilds running in the container will pull down the target repository, run all the associated checks, and comment on the GitHub pull request for real.
+
+## Integrating new checks into PRBuilds
+
+To create a new kind of check for PRBuilds to run, you need to introduce a new class inside of the trousers/modules directory. This class should have a single function, 'run' which takes two parameters for directories and params.
+
+You also need to edit the trousers/github_comment.template to include your new test. The value returned from your run function will be passed to the template.
+
 ## Cloud Deployment
 
 * CloudFormation template included
@@ -72,5 +80,5 @@ To run the built image:
 ## Ongoing work
 
 * Scala rewrite for RiffRaff deployability
-* Decouple from the Guardian frontend repo
-* Robustness (error recovery, dummy ELB for healthchecks, etc)
+* Unhardcode the test data for the Docker run
+
