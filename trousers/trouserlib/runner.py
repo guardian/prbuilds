@@ -67,7 +67,7 @@ class Runner:
 
         """ return yaml configuration from the cloned repo """
 
-        location = "%s/.trousers/config.yml" % directories.workspace
+        location = "%s/.prbuilds/config.yml" % directories.workspace
 
         try:
             return yaml.load(open(location).read())
