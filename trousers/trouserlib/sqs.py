@@ -16,4 +16,6 @@ class Listener:
                 pr = PullRequest(message.body)
                 if filt(pr):
                     return (message, pr)
+                else:
+                    message.delete()
             time.sleep(interval)
