@@ -18,50 +18,44 @@ class Runner:
         os.mkdir(directories.artifacts)
 
     def clone_repo(self, url):
-
+        
         """ clone down the remote repo """
+        
+        # full clone once
 
-        if os.path.exists(directories.workspace):
-
-            # pull & reset
-
-            old = os.getcwd()
-            os.chdir(directories.workspace)
-
-            self.subprocess.call([
-                "git",
-                "fetch"
-            ])
-
-            ret = self.subprocess.call([
-                "git",
-                "reset",
-                "--hard",
-                "origin/%s" % self.branch
-            ])
-
-            os.chdir(old)
-
-            if ret != 0:
-                raise Exception("Failed to update git for %s" % self.branch)
-
-        else:
-
-            # fresh clone
-
+        if not os.path.exists(directories.workspace):
+            
             ret = self.subprocess.call([
                 "git",
                 "clone",
-                "--depth",
-                "1",
-                "-b",
-                self.branch,
                 self.repo,
                 directories.workspace
             ])
 
             if ret != 0:
                 raise Exception("Failed to clone %s" % url)
+
+        # fetch & reset
+
+        old = os.getcwd()
+        os.chdir(directories.workspace)
+
+        self.subprocess.call([
+            "git",
+            "fetch"
+        ])
+
+        ret = self.subprocess.call([
+            "git",
+            "reset",
+            "--hard",
+            "origin/%s" % self.branch
+        ])
+
+        os.chdir(old)
+
+        if ret != 0:
+            raise Exception("Failed to pull branch: %s" % self.branch)
 
     def get_config(self):
 
