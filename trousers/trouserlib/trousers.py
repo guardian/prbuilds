@@ -75,12 +75,6 @@ class Trousers:
 
                 logging.warning("PR Build failed.")
 
-                self.github.update_comment(
-                    pr.commentUrl,
-                    "PRBuilds failed when building this PR: %s" % e,
-                    "PRBuilds failed"
-                )
-
             msg.delete()
 
             self.idle = True
