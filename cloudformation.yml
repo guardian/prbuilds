@@ -189,7 +189,7 @@ Resources:
       AvailabilityZones:
         - eu-west-1a
       VPCZoneIdentifier: !Ref SubnetsParameter
-      HealthCheckType: EC2
+      HealthCheckType: ELB
       HealthCheckGracePeriod: '120'
       MinSize: '1'
       MaxSize: !Ref CapacityParameter
