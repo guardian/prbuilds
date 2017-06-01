@@ -190,7 +190,7 @@ Resources:
         - eu-west-1a
       VPCZoneIdentifier: !Ref SubnetsParameter
       HealthCheckType: ELB
-      HealthCheckGracePeriod: '120'
+      HealthCheckGracePeriod: '300'
       MinSize: '1'
       MaxSize: !Ref CapacityParameter
       DesiredCapacity: !Ref CapacityParameter
