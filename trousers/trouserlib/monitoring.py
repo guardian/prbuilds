@@ -28,7 +28,7 @@ class MonitoringService:
             view_func=self.healthcheck
         )
 
-        app.run(debug=False, port=config.healthcheckPort)
+        app.run(debug=False, host='0.0.0.0', port=config.healthcheckPort)
 
     def monitor(self, target):
 
