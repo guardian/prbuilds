@@ -28,7 +28,9 @@ fi
 
 # install libs
 
-sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential
+sudo apt-get update
+
+sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential apache2-utils
 
 # use easy install to get pip instead of apt-get so we get
 # a recent version instead of whatever ubuntu has
