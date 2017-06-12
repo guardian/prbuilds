@@ -14,7 +14,7 @@ class LoadTestCheck:
         """ run very basic load test using apache ab """
 
         ps = subprocess.Popen(
-            "ab -n 100 -c 10 %s" % (params["url"]),
+            "ab -n 2000 -c 100 %s" % (params["url"]),
             shell=True,
             stdout=subprocess.PIPE,
             cwd=directories.builtins
