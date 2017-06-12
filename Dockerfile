@@ -1,7 +1,7 @@
 FROM java:openjdk-8
 
-RUN apt-get update
-RUN apt-get install -y sudo wget screen python-setuptools vim
+RUN apt-get update --fix-missing
+RUN apt-get install -y sudo wget screen python-setuptools vim gcc apache2-utils
 RUN easy_install pip
 RUN pip install awscli
 RUN useradd -ms /bin/bash ubuntu
