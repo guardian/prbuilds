@@ -20,4 +20,10 @@ PRbuilds results:
 {{ " • ".join(links_for("a11y-report")) }}
 {% endif %}
 
+{% if "loadtest" in results %}
+**Apache Benchmark Load Testing**
+{{ " • ".join(links_for("loadtest")) }}
+{% endif %}
+
+    
 --automated message
