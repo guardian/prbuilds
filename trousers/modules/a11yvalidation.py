@@ -1,5 +1,10 @@
 import subprocess
 import os
+import re
+
+def escape_ansi(line):
+    ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
+    return ansi_escape.sub('', line)
 
 class A11YValidation:
 
@@ -15,13 +20,14 @@ class A11YValidation:
         )
 
         out, err = ps.communicate()
+        out_escaped = escape_ansi(out)
 
         open(
             os.path.join(
                 directories.artifacts,
                 "a11y-report.txt"
             ),"w"
-        ).write(out)
+        ).write(out_escaped)
 
         return {
             "return_code": ps.returncode,
