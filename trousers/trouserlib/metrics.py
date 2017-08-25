@@ -12,12 +12,12 @@ class Metrics:
         """ initialise dynamo tables, use existing if available """
         
         try:
-            self._init_tables()
+            self.create_tables()
         except dynamodb_client.exceptions.ResourceInUseException:
             self.table = dynamodb.Table(self.TABLE_NAME)
             pass
     
-    def _init_tables(self):
+    def create_tables(self):
 
         """ create dynamo table for metrics data """
         
