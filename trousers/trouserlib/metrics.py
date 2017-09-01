@@ -10,12 +10,13 @@ class Metrics:
     def init_tables(self):
 
         """ initialise dynamo tables, use existing if available """
-        
+
         try:
             self.create_tables()
-        except dynamodb_client.exceptions.ResourceInUseException:
-            self.table = dynamodb.Table(self.TABLE_NAME)
-            pass
+            logging.info("creating tables")
+        except:
+            self.table = self.dynamo.Table(self.TABLE_NAME)
+            logging.info("reusing existing table")
     
     def create_tables(self):
 
@@ -28,15 +29,11 @@ class Metrics:
             },
             AttributeDefinitions=[
                 { 'AttributeName': 'project','AttributeType': 'S' },
-                { 'AttributeName': 'prnum','AttributeType': 'I' },
-                { 'AttributeName': 'metric','AttributeType': 'S' },
-                { 'AttributeName': 'type','AttributeType': 'S' },
-                { 'AttributeName': 'value','AttributeType': 'S' }
+                { 'AttributeName': 'rid','AttributeType': 'S' },
             ],
             KeySchema=[
                 { 'AttributeName': 'project', 'KeyType': 'HASH' },
-                { 'AttributeName': 'prnum', 'KeyType': 'HASH' },
-                { 'AttributeName': 'metric', 'KeyType': 'HASH' }
+                { 'AttributeName': 'rid', 'KeyType': 'RANGE' }
             ]
         )
 
@@ -49,10 +46,13 @@ class Metrics:
         
         if not self.table:
             raise Exception("Put metric can not be called before init_tables")
+
+        rid = "%s|%s" % (prnum, metric)
         
         self.table.put_item(
             Item={
-                'prjoject': project,
+                'project': project,
+                'rid': rid,
                 'prnum': prnum,
                 'metric': metric,
                 'type': typ,

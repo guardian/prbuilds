@@ -16,7 +16,7 @@ PRbuilds results:
 {% endif %}
 
 {% if "a11yvalidation" in results %}
-**A11y validation** ({{ results["a11yvalidation"]["raw_output"].count("Error") }})
+**A11y validation** ({{ results["a11yvalidation"]["raw_output"].count("ERROR") }})
 {{ " • ".join(links_for("a11y-report")) }}
 {% endif %}
 

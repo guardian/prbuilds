@@ -31,5 +31,8 @@ class ExceptionsCheck:
 
         return {
             "return_code": ps.returncode,
-            "raw_output": out
+            "raw_output": out,
+            "metrics": [
+                ("exceptions_count", "number", out.count("EXCEPTION"))
+            ]
         }
