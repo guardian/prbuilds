@@ -3,6 +3,7 @@
 
 import os, sys
 from trouserlib.trousers import Trousers
+from trouserlib.metrics import Metrics
 
 BUCKET_NAME = 'prbuilds'
 GH_NAME = os.getenv('GH_NAME', '')
@@ -33,7 +34,35 @@ if __name__ == '__main__':
         def upload_file(self, localpath, key, ExtraArgs):
             pass
 
+    class MockWaiter:
+        def wait(self, TableName):
+            pass
+        
+    class MockTableClient:
+        def get_waiter(self, name):
+            return MockWaiter()
+        
+    class MockTableMeta:
+        client = MockTableClient()
+        
+    class MockDynamoTable:
+        meta = MockTableMeta()
+        def put_item(self, Item):
+            print "putting metric"
+            print Item
+        
+    class MockDynamo:
+        def Table(self, name):
+            return MockDynamoTable()
+        def create_table(self, TableName, ProvisionedThroughput, AttributeDefinitions, KeySchema):
+            return MockDynamoTable()
+
+    m = Metrics(MockDynamo())
+    m.init_tables()
+    m.put_metric("a", 1, "b", "string", "ok")
+        
     trousers.start(
         MockQueue(),
-        MockBucket()
+        MockBucket(),
+        MockDynamo()
     )

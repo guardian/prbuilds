@@ -27,9 +27,9 @@ if __name__ == '__main__':
     )
 
     sqs = session.resource('sqs')
-    s3 = session.resource('s3')
-    dyn = session.resource('dynamodb')
-    
+    dyn = session.resource('dynamodb')    
+    s3  = session.resource('s3')
+
     # launch trousers
 
     trousers = Trousers(
@@ -45,5 +45,6 @@ if __name__ == '__main__':
         ),
         s3.Bucket(
             BUCKET_NAME
-        )
+        ),
+        dyn
     )

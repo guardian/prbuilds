@@ -7,6 +7,7 @@ from .sqs import Listener
 from .github import GitHubService
 from .artifacts import ArtifactService
 from .monitoring import MonitoringService
+from .metrics import Metrics
 
 class Trousers:
 
@@ -26,7 +27,7 @@ class Trousers:
 
         return not self.idle and int(time.time()) - self.started > config.maxBuildTimeSeconds
 
-    def process(self, pr, bucket):
+    def process(self, pr, bucket, metricService):
 
         """ process a message coming off the queue """
 
@@ -34,10 +35,22 @@ class Trousers:
 
             results = runner.run_tests()
 
+            """ artifacts """
             facts = self.artifacts.collect(config.directories.artifacts)
-
             self.artifacts.upload(bucket, "PR-%s" % pr.prnum, facts)
 
+            """ metrics """
+            metrics = [results[k]["metrics"] for k in [k for k in results]]
+            for metric in [item for sublist in metrics for item in sublist]:
+                metricService.put_metric(
+                    pr.cloneUrl,
+                    pr.prnum,
+                    metric[0],
+                    metric[1],
+                    metric[2]
+                )
+
+            """ github comment """
             reporter = Reporter()
             
             comment = reporter.compose_github_comment(
@@ -54,13 +67,15 @@ class Trousers:
 
         logging.info("PR Build %s success" % pr.prnum)
 
-    def start(self, queue, bucket):
+    def start(self, queue, bucket, dynamo):
 
         """ trousers main processor """
 
         listener = Listener()
-
+        metrics = Metrics(dynamo)
+        
         self.monitoring.monitor(self)
+        metrics.init_tables()
 
         while True:
 
@@ -70,7 +85,7 @@ class Trousers:
             self.started = int(time.time())
 
             try:
-                self.process(pr, bucket)
+                self.process(pr, bucket, metrics)
             except Exception as e:
 
                 logging.warning("PR Build failed.")

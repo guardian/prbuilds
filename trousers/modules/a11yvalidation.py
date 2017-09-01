@@ -31,5 +31,8 @@ class A11YValidation:
 
         return {
             "return_code": ps.returncode,
-            "raw_output": out
+            "raw_output": out_escaped,
+            "metrics": [
+                ("a11y_count", "number", out_escaped.count("ERROR"))
+            ]
         }

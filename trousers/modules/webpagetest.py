@@ -25,5 +25,6 @@ class WebPageCheck:
 
         return {
             "return_code": ps.returncode,
-            "raw_output": content
+            "raw_output": content,
+            "metrics": []
         }

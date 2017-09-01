@@ -1,5 +1,6 @@
 import subprocess
 import os
+import re
 
 class LoadTestCheck:
 
@@ -29,7 +30,11 @@ class LoadTestCheck:
             ),"w"
         ).write(out)
 
+        timetaken = re.findall('Time taken for tests:\s+(\d+\.\d+) seconds', out)[0]
         return {
             "return_code": ps.returncode,
-            "raw_output": out
+            "raw_output": out,
+            "metrics": [
+                ("load_test_seconds", "number", timetaken)
+            ]
         }
