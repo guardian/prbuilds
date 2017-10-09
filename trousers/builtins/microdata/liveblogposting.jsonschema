@@ -1,0 +1,51 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {},
+    "properties": {
+        "properties": {
+            "properties": {
+                "liveBlogUpdate": {
+                    "additionalItems": false,
+                    "items": {
+                        "properties": {
+                            "properties": {
+                                "properties": {
+                                    "url": {
+                                        "type": "array"
+                                    }
+                                },
+                                "required": [
+                                    "url",
+                                    "datePublished",
+                                    "articleBody",
+                                    "author",
+                                    "headline",
+                                    "image",
+                                    "publisher"
+                                ],
+                                "type": "object"
+                            }
+                        },
+                        "required": [
+                            "properties"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "liveBlogUpdate",
+                "url",
+                "headline",
+                "description",
+                "publisher"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "properties"
+    ],
+    "type": "object"
+}

@@ -25,5 +25,9 @@ PRbuilds results:
 {{ " • ".join(links_for("loadtest")) }}
 {% endif %}
 
+{% if "microdata" in results %}
+**Microdata Validation** ({{ results["microdata"]["raw_output"].count("invalid") }})
+{{ " • ".join(links_for("microdata")) }}
+{% endif %}
     
 --automated message
