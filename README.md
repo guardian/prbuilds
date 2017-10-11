@@ -1,44 +1,67 @@
 
 # PR-Builds
 
-PR-Builds is a CI-Like build system which monitors incomming GitHub Pull requests, and
-builds pushed code. The twist is that it is designed to fully run the app under test,
-and then perform runtime regression testing against the live app, the results of which
-are stamped onto the Pull Request.
+PRBuilds records the runtime performance characteristics of webapps at the Pull Request stage, and
+stamps the results onto the GitHub PR.
 
-This is a proof of concept system, and is implemented as a ~~small~~ moderate amount of 
-glue code around the Ansible provisioning tool.
+Whereas a CI system runs your tests and analyses your *code*, PRBuilds fully runs the app under
+test and checks it's runtime behavior. PRBuilds exposes your app to the public internet as well,
+so it can integrate with 3rd party web-based testing tools.
 
 ## Architecture
 
 PR Builds is made up of two main components:
 
-1. Ether - a process that pretends to be CAPI and responds with mock data.
-2. Trousers - the script which handles the app build/test/github comment
+1. Ether - a service that pretends to be CAPI and responds with mock data.
+2. Trousers - the service which builds your app and tests
 
-These two pieces of software are run together on one or more worker machines.
+PRBuilds is made up of one or more worker machines, each running both Ether and Trousers. You can
+arbitraily add more workers to scale up with no additional configuration.
 
-In addition to this there is also a lambda which allows the builds to be triggered off
-a http endpoint (i.e. a webhook for GitHub to integrate with).
+The worker instances grab messages off of an SQS Queue, and there is lambda which exposes a http
+endpoint for GitHub webhooks to integrate with.
 
 The lifecycle of a PR Build looks like this:
 
 1. GitHub webhook calls the lambda http endpoint
 2. The Lambda publishes the message from GitHub into an SQS Queue
-3. EC2 worker instances running the Trousers script recieve the messages from the SQS Queue
+3. EC2 worker instances running the Trousers service recieve the messages from the SQS Queue
 4. Trousers runs an Ansible play to build, run and test the code associated with the PR
 
-The Queue-based architecture was chosen because it means the system can be scaled up
-from a single worker instance to many, and ensures that the workload persists if something
-goes wrong.
+## Integrating a webapp with PRBuilds
+
+1. Create a directory called .prbuilds at the root of your repository
+2. Create a ./prbuilds/config.yml file that looks like this
+
+```
+    setup:
+      ansible: .prbuilds/setup.playbook.yml
+    teardown:
+      ansible: .prbuilds/cleanup.playbook.yml
+    checks:
+      screenshots:
+        url: http://theguardian.com
+      exceptions:
+        url: http://theguardian.com
+      ...etc...
+```
+
+3. Create the associated setup.playbook.yml and cleanup.playbook.yml. These files are ansible scripts
+   that describe how to run, and how to kill and clean up, your app. [example](https://github.com/guardian/frontend/tree/master/.prbuilds)
+
+4. Configure your GitHub repo to include a webhook that points to the PRBuilds lambda endpoint.
 
 ## Supported Checks
 
 PRBuilds supports the following checks to be ran against the app under test
 
-* Screenshots (frontend only right now)
-* Exceptions (grabs all Javascript exceptions thrown when visiting a given url)
-* WebPageTest (grabs latency, page weight and timing information for a given url)
+|Config file name|Config file params|Desc                                |
+|----------------|------------------|------------------------------------|
+| screenshots    | url              | take a screenshot                  |
+| exceptions     | url              | record javascript exceptions       |
+| webpagetest    | url              | run webpagetest tool               |
+| loadtest       | url              | run apache benchmark               |
+| microdata      | url              | validate microdata structured data |
 
 ## Using Docker to test PRBuilds
 
@@ -67,11 +90,15 @@ Once the container launches, it will automatically begin a test run against mock
 
 To create a new kind of check for PRBuilds to run, you need to introduce a new class inside of the trousers/modules directory. This class should have a single function, 'run' which takes two parameters for directories and params.
 
-You also need to edit the trousers/github_comment.template to include your new test. The value returned from your run function will be passed to the template.
+Next, alter the trousers/modules/__init__.py file to include your new module in the map
 
-If your check code is simple integrating with an external API over the internet, or invoking a task you expect to be present on the repository under test (such as a 'make' style command) then this should be all you need.
+Finally, you need to edit the trousers/github_comment.template to include your new test. The value returned from your module's ```run``` function will be passed to the template.
 
 If you would like to bundle a script or binary into PRBuilds that you want to execute as a check, you can place these static scripts/binaries into the trousers/builtins package, and then invoke them from your PRBuilds check (See the jsexceptions check - this uses a builtin phantomjs script)
+
+## Metrics
+
+Each test can generate metrics which will be logged into a Dynamo table.
 
 ## Cloud Deployment
 
