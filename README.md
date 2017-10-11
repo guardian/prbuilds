@@ -13,9 +13,9 @@ so it can integrate with 3rd party web-based testing tools.
 PR Builds is made up of two main components:
 
 1. Ether - a service that pretends to be CAPI and responds with mock data.
-2. Trousers - the service which builds your app and tests
+2. Trousers - the service which builds your app and runs the checks
 
-PRBuilds is made up of one or more worker machines, each running both Ether and Trousers. You can
+PRBuilds runs as one or more worker machines, each running both Ether and Trousers. You can
 arbitraily add more workers to scale up with no additional configuration.
 
 The worker instances grab messages off of an SQS Queue, and there is lambda which exposes a http
@@ -27,6 +27,8 @@ The lifecycle of a PR Build looks like this:
 2. The Lambda publishes the message from GitHub into an SQS Queue
 3. EC2 worker instances running the Trousers service recieve the messages from the SQS Queue
 4. Trousers runs an Ansible play to build, run and test the code associated with the PR
+
+cloudformation files are provided if you want to run your own stack
 
 ## Integrating a webapp with PRBuilds
 
