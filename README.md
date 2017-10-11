@@ -62,6 +62,8 @@ PRBuilds supports the following checks to be ran against the app under test
 | webpagetest    | url              | run webpagetest tool               |
 | loadtest       | url              | run apache benchmark               |
 | microdata      | url              | validate microdata structured data |
+| a11yvalidation | url              | run a11y accessibility check       |
+
 
 ## Using Docker to test PRBuilds
 
