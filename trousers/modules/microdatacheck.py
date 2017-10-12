@@ -5,7 +5,6 @@ import sys
 import os
 from jsonschema import validate
 
-
 propmap = {
     "http://schema.org/WebPage": "microdata/webpage.jsonschema",
     "http://schema.org/NewsArticle": "microdata/newsarticle.jsonschema",
@@ -44,11 +43,15 @@ class MicroDataCheck:
                 results += "ignored %s\n" % typ
 
         return results
-            
+
     def run(self, directories, params):
 
-        items = microdata.get_items(urllib.urlopen(params["url"]))
-        results = self.validate_microdata(directories.builtins, items)
+        results = ""
+
+        for url in params["urls"]:
+            results += "results for %s\n" % url
+            items = microdata.get_items(urllib.urlopen(url))
+            results += "%s\n--\n" % self.validate_microdata(directories.builtins, items)
 
         open(
             os.path.join(
@@ -71,4 +74,4 @@ class MicroDataCheck:
 
 if __name__ == "__main__":
     md = MicroDataCheck()
-    md.run(None, {"url": "http://theguardian.com"})
+    md.run(None, {"urls": ["http://theguardian.com"]})
