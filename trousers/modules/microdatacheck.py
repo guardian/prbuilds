@@ -49,9 +49,9 @@ class MicroDataCheck:
         results = ""
 
         for url in params["urls"]:
-            results += "results for %s\n" % url
+            results += "--\nresults for %s\n--\n" % url
             items = microdata.get_items(urllib.urlopen(url))
-            results += "%s\n--\n" % self.validate_microdata(directories.builtins, items)
+            results += "%s\n\n" % self.validate_microdata(directories.builtins, items)
 
         open(
             os.path.join(
