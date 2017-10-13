@@ -55,7 +55,7 @@ class MicroDataCheck:
         for endpoint in params["endpoints"]:
 
             url = endpoint["url"]
-            expected = endpoint["expected"]
+            expected = endpoint.get("expected", [])
             
             results += "--\nresults for %s\n--\n" % url
             items = microdata.get_items(urllib.urlopen(url))
