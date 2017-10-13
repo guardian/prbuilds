@@ -3,17 +3,17 @@
           "number": 2,
           "pull_request": {
             "number": 2,
-            "url": "https://api.github.com/repos/MatthewJWalls/frontend/pulls/2",
+            "url": "https://api.github.com/repos/MatthewJWalls/prbuildstub/pulls/1",
             "state": "open",
             "title": "Update the README with new information",
             "body": "This is a pretty simple change that we need to pull into master.",
-            "comments_url": "https://api.github.com/repos/MatthewJWalls/frontend/issues/2/comments",
+            "comments_url": "https://api.github.com/repos/MatthewJWalls/prbuildstub/issues/1/comments",
             "head": {
-              "label": "MatthewJWalls:anotherpatch",
-              "ref": "anotherpatch",
+              "label": "MatthewJWalls:mock",
+              "ref": "mock",
               "sha": "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c",
               "repo": {
-                "clone_url" : "https://github.com/MatthewJWalls/frontend.git"
+                "clone_url" : "https://github.com/MatthewJWalls/prbuildstub.git"
               }
             }
           }

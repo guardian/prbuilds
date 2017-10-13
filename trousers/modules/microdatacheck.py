@@ -19,7 +19,7 @@ class MicroDataCheck:
 
         self.out = "microdata.txt"
 
-    def validate_microdata(self, schemadir, items):
+    def validate_microdata(self, schemadir, items, expected):
 
         """ returns a report on the given microdata items """
 
@@ -42,16 +42,24 @@ class MicroDataCheck:
             else:
                 results += "ignored %s\n" % typ
 
+        for expect in expected:
+            if expect not in results:
+                results += "invalid: page content did not contain expected microdata item '%s'\n" % expect
+
         return results
 
     def run(self, directories, params):
 
         results = ""
 
-        for url in params["urls"]:
+        for endpoint in params["endpoints"]:
+
+            url = endpoint["url"]
+            expected = endpoint["expected"]
+            
             results += "--\nresults for %s\n--\n" % url
             items = microdata.get_items(urllib.urlopen(url))
-            results += "%s\n\n" % self.validate_microdata(directories.builtins, items)
+            results += "%s\n\n" % self.validate_microdata(directories.builtins, items, expected)
 
         open(
             os.path.join(
