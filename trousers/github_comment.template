@@ -16,7 +16,7 @@ PRbuilds results:
 {% endif %}
 
 {% if "a11yvalidation" in results %}
-** {% if(int(results["a11yvalidation"]["raw_output"].count("ERROR")) == 0) '&#x1F34F;' else '&#x1F34E;' %} A11y validation** ({{ results["a11yvalidation"]["raw_output"].count("ERROR") }})
+**{% if results["a11yvalidation"]["raw_output"].count("ERROR") == 0 %}&#x1F34F;{% else %}&#x1F34E;{% endif %} A11y validation**
 {{ " • ".join(links_for("a11y-report")) }}
 {% endif %}
 
