@@ -6,17 +6,17 @@ PRbuilds results:
 {% endif %}
 
 {% if "exceptions" in results %}
-**{% if results["exceptions"]["raw_output"].count("EXCEPTION") == 0 %}&#x1F49A;{% else %}&#x1F525; (failed) {% endif %} **Exceptions**
+{% if results["exceptions"]["raw_output"].count("EXCEPTION") == 0 %}&#x1F49A;{% else %}&#x1F525; (failed) {% endif %} **Exceptions**
 {{ " • ".join(links_for("thrown-exception")) }}
 {% endif %}
 
 {% if "webpagetest" in results %}
-**{% if results["webpagetest"]["raw_output"].count("Warning") == 0 %}&#x1F49A;{% else %}&#x1F525; (failed) {% endif %} **Webpagetest**
+{% if results["webpagetest"]["raw_output"].count("Warning") == 0 %}&#x1F49A;{% else %}&#x1F525; (failed) {% endif %} **Webpagetest**
 {{ " • ".join(links_for("performanceComparisonSummary")) }}
 {% endif %}
 
 {% if "a11yvalidation" in results %}
-**{% if results["a11yvalidation"]["raw_output"].count("ERROR") == 0 %}&#x1F49A;{% else %}&#x1F525; (failed) {% endif %} A11y validation**
+{% if results["a11yvalidation"]["raw_output"].count("ERROR") == 0 %}&#x1F49A;{% else %}&#x1F525; (failed) {% endif %} **A11y validation**
 {{ " • ".join(links_for("a11y-report")) }}
 {% endif %}
 
@@ -26,7 +26,7 @@ PRbuilds results:
 {% endif %}
 
 {% if "microdata" in results %}
-**{% if results["microdata"]["raw_output"].count("invalid") == 0 %}&#x1F49A;{% else %}&#x1F525; (invalid) {% endif %} **Microdata Validation**
+{% if results["microdata"]["raw_output"].count("invalid") == 0 %}&#x1F49A;{% else %}&#x1F525; (invalid) {% endif %} **Microdata Validation**
 {{ " • ".join(links_for("microdata")) }}
 {% endif %}
     
