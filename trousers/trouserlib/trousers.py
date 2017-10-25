@@ -61,8 +61,7 @@ class Trousers:
 
             self.github.update_comment(
                 pr.commentUrl,
-                comment,
-                "-automated message"
+                comment
             )
 
         logging.info("PR Build %s success" % pr.prnum)

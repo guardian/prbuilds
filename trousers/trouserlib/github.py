@@ -12,29 +12,47 @@ class GitHubService:
         self.token = token
         self.requests = requests
 
-    def has_comment(self, url, including):
+    def has_comment(self, url):
 
-        """ Is the given text included anywhere """
+        """ have we already commented on this pr """
         
         res = self.requests.get(url)
 
         res.raise_for_status()
 
         for post in res.json():
-            if including in post["body"]:
-                return True
+            if post["user"]["login"] == self.name:
+                return post
 
-        return False
+        return None
 
-    def update_comment(self, url, body, test):
+    def update_comment(self, url, body):
 
-        """ Add github comment only if it doesn't exist """
+        """ Add or overwrite github comment """
 
-        if not self.has_comment(url, test):
+        existing = self.has_comment(url)
+        
+        if existing:
+            self.overwrite_comment(existing["url"], body)
+        else:
             self.post_comment(url, body)
-            return True
 
-        return False
+    def overwrite_comment(self, url, body):
+
+        """ overwrite comment on the given api url with body """
+
+	payload = { "body": body }
+        
+        res = self.requests.patch(
+            url,
+            data = json.dumps(payload),
+            auth = HTTPBasicAuth(
+                self.name,
+                self.token
+            )
+        )
+
+        res.raise_for_status()        
     
     def post_comment(self, url, body):
 
