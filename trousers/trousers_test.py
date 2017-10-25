@@ -13,17 +13,25 @@ class MockSubprocess:
         return 0
 
 class MockResponse:
-    def __init__(self):
-        self.status_code = 200
-        self.text = "OK"
+    def __init__(self, statusCode=200, text="OK"):
+        self.status_code = statusCode
+        self.text = text
     def raise_for_status(self):
         pass
+    def json(self):
+            return json.loads(self.text)
     
 class MockRequests:
+    def __init__(self, mockResponse=MockResponse()):
+        self.response = mockResponse
     def post(self, url, data, auth):
         self.lastUrl = url
         self.lastData = data
-        return MockResponse()
+        return self.response
+    def get(self, url):
+        self.lastUrl = url
+        self.lastData = None
+        return self.response        
 
 class MockBucket:
     def upload_file(self, source, dest, ExtraArgs):
@@ -33,6 +41,8 @@ class MockBucket:
 
 class GitHubServiceTests(unittest.TestCase):
 
+    """ does not talk to the real github """
+    
     def test_post_comment(self):
         s = GitHubService("name", "token")
         r = MockRequests()
@@ -43,6 +53,10 @@ class GitHubServiceTests(unittest.TestCase):
 
     def test_has_comment(self):
         s = GitHubService("name", "token")
+        s.requests = MockRequests(
+            MockResponse(200, open("data/gh_comment_api_response.json").read())
+        )
+        
         self.assertTrue(
             s.has_comment(
                 "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
@@ -52,6 +66,10 @@ class GitHubServiceTests(unittest.TestCase):
 
     def test_has_no_comment(self):
         s = GitHubService("name", "token")
+        s.requests = MockRequests(
+            MockResponse(200, open("data/gh_comment_api_response.json").read())
+        )
+        
         self.assertFalse(
             s.has_comment(
                 "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
@@ -59,9 +77,10 @@ class GitHubServiceTests(unittest.TestCase):
             )
         )
 
-
 class PullRequestTests(unittest.TestCase):
 
+    """ does not talk to the real github """
+    
     def test_fields(self):
         mock = open("data/gh_pull.mock").read()
         pull = PullRequest(mock)
@@ -76,7 +95,7 @@ class ArtifactServiceTests(unittest.TestCase):
     def test_collect(self):
         a = ArtifactService()
         files = a.collect("./data")
-        self.assertEqual(len([x for x in files]), 1)
+        self.assertEqual(len([x for x in files]), 2)
 
     def test_content_type(self):
         a = ArtifactService()
