@@ -44,7 +44,7 @@ class GitHubServiceTests(unittest.TestCase):
     """ does not talk to the real github """
     
     def test_post_comment(self):
-        s = GitHubService("name", "token")
+        s = GitHubService("PRBuilds", "token")
         r = MockRequests()
         s.requests = r
         s.post_comment("url", "payload")
@@ -52,30 +52,57 @@ class GitHubServiceTests(unittest.TestCase):
         self.assertTrue("payload" in r.lastData)
 
     def test_has_comment(self):
-        s = GitHubService("name", "token")
+        s = GitHubService("PRBuilds", "token")
         s.requests = MockRequests(
             MockResponse(200, open("data/gh_comment_api_response.json").read())
         )
         
         self.assertTrue(
             s.has_comment(
-                "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
-                "PR build"
-            )
+                "https://api.github.com/repos/guardian/frontend/issues/15499/comments"
+            ) != None
         )
 
     def test_has_no_comment(self):
-        s = GitHubService("name", "token")
+        s = GitHubService("Wooooow", "token")
+        s.requests = MockRequests(
+            MockResponse(200, open("data/gh_comment_api_response.json").read())
+        )
+        
+        self.assertTrue(
+            s.has_comment(
+                "https://api.github.com/repos/guardian/frontend/issues/15499/comments"
+            ) == None
+        )
+
+    def test_update_comment_when_one_exists(self):
+        
+        s = GitHubService("PRBuilds", "token")
         s.requests = MockRequests(
             MockResponse(200, open("data/gh_comment_api_response.json").read())
         )
         
         self.assertFalse(
-            s.has_comment(
+            s.update_comment(
                 "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
-                "WoooWooooowoowoww"
+                "This is the body"
             )
         )
+
+    def test_update_comment_when_none_exist(self):
+        
+        s = GitHubService("Wooooow", "token")
+        s.requests = MockRequests(
+            MockResponse(200, open("data/gh_comment_api_response.json").read())
+        )
+        
+        self.assertTrue(
+            s.update_comment(
+                "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
+                "This is the body"
+            )
+        )        
+        
 
 class PullRequestTests(unittest.TestCase):
 
@@ -84,9 +111,9 @@ class PullRequestTests(unittest.TestCase):
     def test_fields(self):
         mock = open("data/gh_pull.mock").read()
         pull = PullRequest(mock)
-        self.assertEqual(pull.branch, "anotherpatch")
-        self.assertTrue("frontend" in pull.cloneUrl)
-        self.assertTrue("frontend" in pull.commentUrl)
+        self.assertEqual(pull.branch, "mock")
+        self.assertTrue("prbuildstub" in pull.cloneUrl)
+        self.assertTrue("prbuildstub" in pull.commentUrl)
         self.assertEqual(pull.prnum, 2)
 
         

@@ -12,25 +12,25 @@ class GitHubService:
         self.token = token
         self.requests = requests
 
-    def has_comment(self, url, including):
+    def has_comment(self, url):
 
-        """ Is the given text included anywhere """
+        """ have we already commented on this pr """
         
         res = self.requests.get(url)
 
         res.raise_for_status()
 
         for post in res.json():
-            if including in post["body"]:
-                return True
+            if post["user"]["login"] == self.name:
+                return post
 
-        return False
+        return None
 
-    def update_comment(self, url, body, test):
+    def update_comment(self, url, body):
 
         """ Add github comment only if it doesn't exist """
 
-        if not self.has_comment(url, test):
+        if not self.has_comment(url):
             self.post_comment(url, body)
             return True
 
