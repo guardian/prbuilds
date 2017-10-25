@@ -1,3 +1,5 @@
+{# this is a jinja2 template. See http://jinja.pocoo.org/docs/2.9/templates/ #}
+
 PRbuilds results:
 
 {% if "screenshots" in results %}
