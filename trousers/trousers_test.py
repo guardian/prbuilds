@@ -31,7 +31,11 @@ class MockRequests:
     def get(self, url):
         self.lastUrl = url
         self.lastData = None
-        return self.response        
+        return self.response
+    def patch(self, url, data, auth):
+        self.lastUrl = url
+        self.lastData = data
+        return self.response
 
 class MockBucket:
     def upload_file(self, source, dest, ExtraArgs):
@@ -82,11 +86,14 @@ class GitHubServiceTests(unittest.TestCase):
             MockResponse(200, open("data/gh_comment_api_response.json").read())
         )
         
-        self.assertFalse(
-            s.update_comment(
-                "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
-                "This is the body"
-            )
+        s.update_comment(
+            "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
+            "This is the body"
+        )
+
+        self.assertEqual(
+            s.requests.lastUrl,
+            "https://api.github.com/repos/guardian/frontend/issues/comments/271269042"
         )
 
     def test_update_comment_when_none_exist(self):
@@ -96,13 +103,10 @@ class GitHubServiceTests(unittest.TestCase):
             MockResponse(200, open("data/gh_comment_api_response.json").read())
         )
         
-        self.assertTrue(
-            s.update_comment(
-                "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
-                "This is the body"
-            )
-        )        
-        
+        s.update_comment(
+            "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
+            "This is the body"
+        )
 
 class PullRequestTests(unittest.TestCase):
 
