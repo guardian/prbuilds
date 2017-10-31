@@ -20,7 +20,6 @@
                                     "articleBody",
                                     "author",
                                     "headline",
-                                    "image",
                                     "publisher"
                                 ],
                                 "type": "object"
