@@ -11,10 +11,11 @@ from .metrics import Metrics
 
 class Trousers:
 
-    def __init__(self, ghName, ghToken):
+    def __init__(self, reporting, ghName, ghToken):
 
         """ constructor """
 
+        self.reporting = reporting
         self.github = GitHubService(ghName, ghToken)
         self.artifacts = ArtifactService()
         self.monitoring = MonitoringService()
@@ -51,18 +52,23 @@ class Trousers:
                 )
 
             """ github comment """
-            reporter = Reporter()
-            
-            comment = reporter.compose_github_comment(
-                pr.prnum,
-                facts,
-                results
-            )
 
-            self.github.update_comment(
-                pr.commentUrl,
-                comment
-            )
+            if self.reporting == "github":
+                
+                reporter = Reporter()
+            
+                comment = reporter.compose_github_comment(
+                    pr.prnum,
+                    facts,
+                    results
+                )
+
+                self.github.update_comment(
+                    pr.commentUrl,
+                    comment
+                )
+
+            logging.info()
 
         logging.info("PR Build %s success" % pr.prnum)
 

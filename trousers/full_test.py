@@ -5,10 +5,11 @@ import os, sys
 from trouserlib.trousers import Trousers
 from trouserlib.metrics import Metrics
 
-BUCKET_NAME = 'prbuilds'
 GH_NAME = os.getenv('GH_NAME', '')
 GH_TOKEN = os.getenv('GH_TOKEN', '')
 QUEUE_NAME = os.getenv('QUEUE_NAME', '')
+BUCKET_NAME = os.getenv('BUCKET_NAME', 'prbuilds')
+REPORTING = os.getenv('REPORTING', 'github')
 
 if __name__ == '__main__':
 
