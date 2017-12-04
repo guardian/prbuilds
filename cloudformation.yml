@@ -150,7 +150,7 @@ Resources:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Properties:
       ImageId: !Ref AMIParameter
-      InstanceType: t2.medium
+      InstanceType: m4.large
       AssociatePublicIpAddress: true
       IamInstanceProfile: !Ref InstanceProfileParameter
       KeyName: !Ref KeyNameParameter
@@ -160,7 +160,7 @@ Resources:
         - DeviceName: /dev/sda1
           Ebs:
             VolumeSize: 24
-            ColumeType: gp2
+            VolumeType: gp2
       UserData: !Base64
         'Fn::Join':
           - ''
