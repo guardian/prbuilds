@@ -82,8 +82,11 @@ class Runner:
 
         """ set up the running app via an ansible play """
 
+        logging.info("Cleaning up")
         self.cleanup()
+        logging.info("Cloning")
         self.clone_repo(self.repo)
+        logging.info("Setting up")
         self.setup()
 
         return self
@@ -99,15 +102,14 @@ class Runner:
         ])
 
         if ret != 0:
-            raise Exception("Ansible play did not exit zero")
+            raise Exception("PR Build setup failed")
     
     def cleanup(self):
 
         conf = self.get_config()
 
         playbook = os.path.join(directories.override, "cleanup.playbook.yml"),
-
-
+        
         self.subprocess.call([
             "ansible-playbook", playbook
         ])

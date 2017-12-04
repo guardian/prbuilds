@@ -92,8 +92,8 @@ class Trousers:
             try:
                 self.process(pr, bucket, metrics)
             except Exception as e:
-
                 logging.warning("PR Build failed.")
+                logging.warning(str(e))
 
             msg.delete()
 
