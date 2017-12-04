@@ -106,7 +106,7 @@ class Runner:
     
     def cleanup(self):
 
-        playbook = os.path.join(directories.override, "cleanup.playbook.yml"),
+        playbook = os.path.join(directories.override, "cleanup.playbook.yml")
         
         self.subprocess.call([
             "ansible-playbook", playbook
