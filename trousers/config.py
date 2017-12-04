@@ -8,6 +8,7 @@ class Directories:
         self.prbuilds  = path.join(root,"prbuilds/")
         self.artifacts = path.join(root,"artifacts/")
         self.builtins  = path.join(root,"prbuilds/trousers/builtins/")
+        self.override  = path.join(root, "prbuilds/trousers/garnett")
     def check(self):
         assert path.isdir(self.root)
         assert path.isdir(self.workspace)

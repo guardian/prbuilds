@@ -82,13 +82,17 @@ class Runner:
 
         """ set up the running app via an ansible play """
 
+        self.cleanup()
         self.clone_repo(self.repo)
+        self.setup()
 
-        conf = self.get_config()
+        return self
+
+    def setup(self):
 
         ret = self.subprocess.call([
             "ansible-playbook",
-            os.path.join(directories.workspace, conf["setup"]["ansible"]),
+            os.path.join(directories.override, "setup.playbook.yml"),
             "--extra-vars",
             "branch=%s clone_url=%s" % (self.branch, self.repo),
             "-v"
@@ -96,23 +100,23 @@ class Runner:
 
         if ret != 0:
             raise Exception("Ansible play did not exit zero")
-
-        return self
-
-    def __exit__(self, type, value, traceback):
-
-        """ stop the running app and clean up """
+    
+    def cleanup(self):
 
         conf = self.get_config()
 
-        playbook = os.path.join(directories.workspace, conf["teardown"]["ansible"])
+        playbook = os.path.join(directories.override, "cleanup.playbook.yml"),
+
 
         self.subprocess.call([
             "ansible-playbook", playbook
         ])
 
         if traceback:
-            logging.error("PR Build failed")
+            logging.error("PR Build cleanup failed")
             logging.error(str(traceback))
             logging.error(str(value))
             tb.print_tb(traceback)
+        
+    def __exit__(self, type, value, traceback):
+        pass

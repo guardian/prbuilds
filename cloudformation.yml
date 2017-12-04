@@ -167,10 +167,16 @@ Resources:
           - - |
               #!/bin/bash -xe
             - >
-              git clone https://github.com/guardian/prbuilds.git
+              git clone -b garnett https://github.com/guardian/prbuilds.git
               /home/ubuntu/prbuilds
             - export GH_NAME=
             - !Ref GitHubNameParameter
+            - |+
+            - export REPORTING=
+            - !Ref ReportingParameter
+            - |+
+            - export BUCKET_NAME=
+            - !Ref BucketParameter
             - |+
 
             - export GH_TOKEN=
@@ -281,3 +287,11 @@ Parameters:
     Type: String
     Default: ''
     Description: GitHub key to use
+  ReportingParameter:
+    Type: String
+    Default: 'github'
+    Description: How to report
+  BucketParameter:
+    Type: String
+    Default: 'prbuilds'
+    Description: What bucket to store artifacts in

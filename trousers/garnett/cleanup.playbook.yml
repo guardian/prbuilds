@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  tasks:
+    - name: kill any already running application
+      command: screen -S trousers-build -X quit
