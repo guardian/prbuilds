@@ -111,12 +111,6 @@ class Runner:
         self.subprocess.call([
             "ansible-playbook", playbook
         ])
-
-        if traceback:
-            logging.error("PR Build cleanup failed")
-            logging.error(str(traceback))
-            logging.error(str(value))
-            tb.print_tb(traceback)
         
     def __exit__(self, type, value, traceback):
         pass
