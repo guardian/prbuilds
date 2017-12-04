@@ -106,8 +106,6 @@ class Runner:
     
     def cleanup(self):
 
-        conf = self.get_config()
-
         playbook = os.path.join(directories.override, "cleanup.playbook.yml"),
         
         self.subprocess.call([
