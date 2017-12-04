@@ -16,7 +16,7 @@ class Directories:
         assert path.isdir(self.artifacts)
         assert path.isdir(self.builtins)
 
-root = "/dev/sda1"
+root = "/home/ubuntu"
 directories = Directories(root)
 
 healthcheckEndpoint = "/healthcheck"
