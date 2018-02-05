@@ -22,14 +22,20 @@ PRbuilds results:
 {{ " • ".join(links_for("a11y-report")) }}
 {% endif %}
 
+{% if "microdata" in results %}
+{% if results["microdata"]["raw_output"].count("invalid") == 0 %}&#x1F49A;{% else %}&#x1F525; (invalid) {% endif %} **Microdata Validation**
+{{ " • ".join(links_for("microdata")) }}
+{% endif %}
+    
 {% if "loadtest" in results %}
 **Apache Benchmark Load Testing**
 {{ " • ".join(links_for("loadtest")) }}
 {% endif %}
 
-{% if "microdata" in results %}
-{% if results["microdata"]["raw_output"].count("invalid") == 0 %}&#x1F49A;{% else %}&#x1F525; (invalid) {% endif %} **Microdata Validation**
-{{ " • ".join(links_for("microdata")) }}
-{% endif %}
+{% if "lighthouse" in results %}
+**LightHouse Reporting**
+{{ " • ".join(links_for("lighthouse")) }}
+{% endif %}    
+
     
 --automated message

@@ -5,6 +5,7 @@ from .webpagetest import WebPageCheck
 from .a11yvalidation import A11YValidation
 from .loadtest import LoadTestCheck
 from .microdatacheck import MicroDataCheck
+from .lighthouse import LightHouseCheck
 
 from config import directories
 
@@ -14,7 +15,8 @@ allChecks = {
     "webpagetest" : WebPageCheck(),
     "a11yvalidation": A11YValidation(),
     "loadtest": LoadTestCheck(),
-    "microdata": MicroDataCheck()
+    "microdata": MicroDataCheck(),
+    "lighthouse": LightHouseCheck()
 }
 
 def run_with_config(chkConfig):
