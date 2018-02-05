@@ -35,7 +35,8 @@ PRbuilds results:
 {% if "lighthouse" in results %}
 **LightHouse Reporting**
 {{ " • ".join(links_for("lighthouse")) }}
-{% endif %}    
+returned: {{ results["lighthouse"]["return_code"] }}
+{% endif %}
 
     
 --automated message
