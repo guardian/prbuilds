@@ -36,6 +36,7 @@ PRbuilds results:
 **LightHouse Reporting**
 {{ " • ".join(links_for("lighthouse")) }}
 returned: {{ results["lighthouse"]["return_code"] }}
+output: {{ results["lighthouse"]["raw_output"] }}
 {% endif %}
 
     
