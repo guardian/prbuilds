@@ -3,12 +3,6 @@ import os
 
 class LightHouseCheck:
 
-    def __init__(self):
-
-        """ constructor """
-
-        self.out  = "thrown-exceptions.txt"
-
     def install(self):
 
         subprocess.call("which lighthouse", shell=True)
