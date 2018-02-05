@@ -150,7 +150,7 @@ Resources:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Properties:
       ImageId: !Ref AMIParameter
-      InstanceType: c4.medium
+      InstanceType: c4.large
       AssociatePublicIpAddress: true
       IamInstanceProfile: !Ref InstanceProfileParameter
       KeyName: !Ref KeyNameParameter
