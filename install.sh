@@ -28,7 +28,7 @@ fi
 
 # install libs
 
-sudo add-apt-repository ppa:canonical-chromium-builds/stage
+sudo add-apt-repository --yes ppa:canonical-chromium-builds/stage
 
 sudo apt-get update
 
