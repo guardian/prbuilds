@@ -27,7 +27,7 @@ class LightHouseCheck:
         )
         
         ps = subprocess.Popen(
-            "lighthouse --output-path=%s %s" % (pth, params["url"]),
+            "lighthouse --no-sandbox --output-path=%s %s" % (pth, params["url"]),
             shell=True,
             stdout=subprocess.PIPE
         )
