@@ -20,7 +20,9 @@ class ArtifactService:
         return {
             "jpg": "image/jpeg",
             "png": "image/png",
-            "text": "text/plain"
+            "text": "text/plain",
+            "html": "text/html",
+            "htm": "text/html"
         }.get(path.split(".")[-1], default)
     
     def upload(self, bucket, prefix, artifacts):
