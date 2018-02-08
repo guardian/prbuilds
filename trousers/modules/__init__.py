@@ -21,7 +21,7 @@ allChecks = {
 
 def run_test(name, directories, params):
     try:
-        print "Running %s" % k        
+        print "Running %s" % name
         return allChecks[name].run(
             directories,
             params
