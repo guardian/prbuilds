@@ -39,7 +39,7 @@ def run_with_config(chkConfig):
     for k, v in chkConfig.items():
         if k in allChecks.keys():
             res = run_test(
-                name,
+                k,
                 directories,
                 v
             )
