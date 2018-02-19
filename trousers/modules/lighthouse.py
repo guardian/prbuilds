@@ -9,9 +9,18 @@ class LightHouseCheck:
         
         if subprocess.call("lighthouse --version", shell=True) == 0:
             return
-        
-        subprocess.call("npm install -g lighthouse", shell=True)
 
+        ps = subprocess.Popen(
+            'bash -c ". ~/.nvm/nvm.sh; nvm use; npm install -g lighthouse"',
+            shell=True,
+            stdout=subprocess.PIPE,
+            cwd=directories.workspace
+        )
+
+        out, err = ps.communicate()
+
+        print "lighthouse install errors: %s" % err
+        
         if subprocess.call("lighthouse --version", shell=True) != 0:
             raise Exception("Unable to install lighthouse")
             

@@ -26,8 +26,9 @@ def run_test(name, directories, params):
             directories,
             params
         )
-    except:
+    except Exception as e:
         print "Failed to run check: %s" % name
+        print e
         return None
 
 def run_with_config(chkConfig):
