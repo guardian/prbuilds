@@ -3,7 +3,7 @@ import os
 
 class LightHouseCheck:
 
-    def install(self):
+    def install(self, directories):
 
         subprocess.call("which lighthouse", shell=True)
         
@@ -28,7 +28,7 @@ class LightHouseCheck:
 
         """ run lighthouse """
 
-        self.install()
+        self.install(directories)
 
         pth = os.path.join(
             directories.artifacts,
