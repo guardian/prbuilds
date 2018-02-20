@@ -3,15 +3,10 @@ import os
 
 class LightHouseCheck:
 
-    def install(self, directories):
-
-        subprocess.call("which lighthouse", shell=True)
-        
-        if subprocess.call("lighthouse --version", shell=True) == 0:
-            return
+    def run_with_nvm(self, cmd, directories):
 
         ps = subprocess.Popen(
-            'bash -c ". ~/.nvm/nvm.sh; nvm use; npm install -g lighthouse"',
+            'bash -c ". ~/.nvm/nvm.sh; nvm use; %s"' % cmd,
             shell=True,
             stdout=subprocess.PIPE,
             cwd=directories.workspace
@@ -19,9 +14,16 @@ class LightHouseCheck:
 
         out, err = ps.communicate()
 
-        print "lighthouse install errors: %s" % err
-        
-        if subprocess.call("lighthouse --version", shell=True) != 0:
+        return ps.returncode
+    
+    def install(self, directories):
+
+        if self.run_with_nvm("lighthouse --version", directories) == 0:
+            return
+
+        self.run_with_nvm("npm install -g lighthouse", directories)
+
+        if self.run_with_nvm("lighthouse --version", directories) != 0:
             raise Exception("Unable to install lighthouse")
             
     def run(self, directories, params):
@@ -35,17 +37,14 @@ class LightHouseCheck:
             "lighthouse.html"
         )
         
-        ps = subprocess.Popen(
-            "lighthouse --chrome-flags=\"--headless --no-sandbox\" --output-path=%s %s" % (pth, params["url"]),
-            shell=True,
-            stdout=subprocess.PIPE
+        ret = self.run_with_nvm(
+            "lighthouse --chrome-flags='--headless --no-sandbox' --output-path=%s %s" % (pth, params["url"]),
+            directories
         )
 
-        out, err = ps.communicate()
-
         return {
-            "return_code": ps.returncode,
-            "raw_output": out,
+            "return_code": ret,
+            "raw_output": "mock, changeme",
             "metrics": []
         }
 
@@ -55,6 +54,7 @@ if __name__ == "__main__":
 
     class DirectoriesMock:
         artifacts = "./"
+        workspace = "./"
 
     lh = LightHouseCheck()
 
