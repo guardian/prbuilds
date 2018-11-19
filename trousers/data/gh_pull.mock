@@ -13,7 +13,8 @@
               "ref": "mock",
               "sha": "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c",
               "repo": {
-                "clone_url" : "https://github.com/MatthewJWalls/prbuildstub.git"
+                "clone_url" : "https://github.com/MatthewJWalls/prbuildstub.git",
+                "name": "prbuildstub"
               }
             }
           }

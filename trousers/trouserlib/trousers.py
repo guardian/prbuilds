@@ -32,12 +32,14 @@ class Trousers:
 
         """ process a message coming off the queue """
 
-        with Runner(pr.cloneUrl, pr.branch) as runner:
+        directories = config.directoriesForRepo(pr.repoName)
+
+        with Runner(pr.cloneUrl, pr.branch, directories) as runner:
 
             results = runner.run_tests()
 
             """ artifacts """
-            facts = self.artifacts.collect(config.directories.artifacts)
+            facts = self.artifacts.collect(directories.artifacts)
             self.artifacts.upload(bucket, "PR-%s" % pr.prnum, facts)
 
             """ metrics """
@@ -54,9 +56,9 @@ class Trousers:
             """ github comment """
 
             if self.reporting == "github":
-                
+
                 reporter = Reporter()
-            
+
                 comment = reporter.compose_github_comment(
                     pr.prnum,
                     facts,
@@ -78,7 +80,7 @@ class Trousers:
 
         listener = Listener()
         metrics = Metrics(dynamo)
-        
+
         self.monitoring.monitor(self)
         metrics.init_tables()
 

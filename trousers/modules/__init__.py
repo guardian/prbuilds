@@ -7,8 +7,6 @@ from .loadtest import LoadTestCheck
 from .microdatacheck import MicroDataCheck
 from .lighthouse import LightHouseCheck
 
-from config import directories
-
 allChecks = {
     "screenshots"  : ScreenshotsCheck(),
     "exceptions"  : ExceptionsCheck(),
@@ -31,7 +29,7 @@ def run_test(name, directories, params):
         print e
         return None
 
-def run_with_config(chkConfig):
+def run_with_config(chkConfig, directories):
 
     results = {}
 

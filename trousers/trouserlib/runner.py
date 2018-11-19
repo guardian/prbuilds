@@ -1,35 +1,35 @@
 import subprocess, modules, yaml, logging, os, shutil
 import traceback as tb
-from config import directories
 
 class Runner:
 
-    def __init__(self, repo, branch):
+    def __init__(self, repo, branch, directories):
 
         """ constructor """
 
         self.subprocess = subprocess
         self.repo = repo
         self.branch = branch
+        self.directories = directories
 
-        if os.path.isdir(directories.artifacts):
-            shutil.rmtree(directories.artifacts)
+        if os.path.isdir(self.directories.artifacts):
+            shutil.rmtree(self.directories.artifacts)
 
-        os.mkdir(directories.artifacts)
+        os.mkdir(self.directories.artifacts)
 
     def clone_repo(self, url):
-        
+
         """ clone down the remote repo """
-        
+
         # full clone once
 
-        if not os.path.exists(directories.workspace):
-            
+        if not os.path.exists(self.directories.workspace):
+
             ret = self.subprocess.call([
                 "git",
                 "clone",
                 self.repo,
-                directories.workspace
+                self.directories.workspace
             ])
 
             if ret != 0:
@@ -38,7 +38,7 @@ class Runner:
         # fetch & reset
 
         old = os.getcwd()
-        os.chdir(directories.workspace)
+        os.chdir(self.directories.workspace)
 
         self.subprocess.call([
             "git",
@@ -61,7 +61,7 @@ class Runner:
 
         """ return yaml configuration from the cloned repo """
 
-        location = "%s/.prbuilds/config.yml" % directories.workspace
+        location = "%s/.prbuilds/config.yml" % self.directories.workspace
 
         try:
             return yaml.load(open(location).read())
@@ -88,7 +88,7 @@ class Runner:
 
         ret = self.subprocess.call([
             "ansible-playbook",
-            os.path.join(directories.workspace, conf["setup"]["ansible"]),
+            os.path.join(self.directories.workspace, conf["setup"]["ansible"]),
             "--extra-vars",
             "branch=%s clone_url=%s" % (self.branch, self.repo),
             "-v"
@@ -105,7 +105,7 @@ class Runner:
 
         conf = self.get_config()
 
-        playbook = os.path.join(directories.workspace, conf["teardown"]["ansible"])
+        playbook = os.path.join(self.directories.workspace, conf["teardown"]["ansible"])
 
         self.subprocess.call([
             "ansible-playbook", playbook

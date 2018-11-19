@@ -9,5 +9,6 @@ class PullRequest:
         self.commentUrl = data["comments_url"]
         self.branch = data["head"]["ref"]
         self.cloneUrl = data["head"]["repo"]["clone_url"]
+        self.repoName = data["head"]["repo"]["name"]
         self.prnum = data["number"]
         self.action = head["action"]
