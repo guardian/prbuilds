@@ -1,6 +1,8 @@
 import subprocess, modules, yaml, logging, os, shutil
 import traceback as tb
 
+logging.basicConfig(level=logging.DEBUG)
+
 class Runner:
 
     def __init__(self, repo, branch, directories):
@@ -26,6 +28,8 @@ class Runner:
 
         # full clone once
 
+        logging.info("Cloning into %s" % self.directories.workspace)
+
         if not os.path.exists(self.directories.workspace):
 
             ret = self.subprocess.call([
@@ -37,6 +41,9 @@ class Runner:
 
             if ret != 0:
                 raise Exception("Failed to clone %s" % url)
+
+        if not os.path.exists(self.directories.workspace):
+            raise Exception("workspace not created")
 
         # fetch & reset
 
@@ -65,6 +72,8 @@ class Runner:
         """ return yaml configuration from the cloned repo """
 
         location = "%s/.prbuilds/config.yml" % self.directories.workspace
+
+        logging.info("Looking for configuration at %s" % location)
 
         try:
             return yaml.load(open(location).read())
@@ -118,4 +127,3 @@ class Runner:
             logging.error("PR Build failed")
             logging.error(str(traceback))
             logging.error(str(value))
-            tb.print_tb(traceback)

@@ -28,7 +28,7 @@ if __name__ == '__main__':
     )
 
     sqs = session.resource('sqs')
-    dyn = session.resource('dynamodb')    
+    dyn = session.resource('dynamodb')
     s3  = session.resource('s3')
 
     # launch trousers
