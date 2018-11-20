@@ -70,9 +70,10 @@ cd $parent/trousers
 
 if [[ "$1" == "-test" ]]; then
     screen -d -L -m python full_test.py
+    echo "Running prbuilds in test-mode"
 else
     screen -d -L -m python trousers.py
+    echo "Blocking until killed"    
 fi
 
-echo "Blocking until killed"
 bash

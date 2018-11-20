@@ -19,7 +19,7 @@ if __name__ == '__main__':
         GH_NAME, GH_TOKEN
     )
 
-    print "Starting trousers on queue %s" % QUEUE_NAME
+    print "Starting test run"
 
     class MockMessage:
         def __init__(self):

@@ -17,6 +17,9 @@ class Runner:
 
         os.mkdir(self.directories.artifacts)
 
+        if not os.path.exists(self.directories.workspaceRoot):
+            os.mkdir(self.directories.workspaceRoot)
+
     def clone_repo(self, url):
 
         """ clone down the remote repo """
