@@ -87,7 +87,8 @@ class Runner:
         logging.info("Running tests")
 
         return modules.run_with_config(
-            self.get_config()["checks"]
+            self.get_config()["checks"],
+            self.directories
         )
 
     def __enter__(self):
