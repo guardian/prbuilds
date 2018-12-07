@@ -1,0 +1,8 @@
+{
+  "ref": "master",
+  "repository": {
+    "name": "prbuildstub",
+    "comments_url": "https://api.github.com/repos/MatthewJWalls/prbuildstub/issues/1/comments",
+    "clone_url": "https://github.com/MatthewJWalls/prbuildstub.git"
+  }
+}

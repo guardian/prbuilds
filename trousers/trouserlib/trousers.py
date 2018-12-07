@@ -28,26 +28,26 @@ class Trousers:
 
         return not self.idle and int(time.time()) - self.started > config.maxBuildTimeSeconds
 
-    def process(self, pr, bucket, metricService):
+    def process(self, action, bucket, metricService):
 
         """ process a message coming off the queue """
 
-        directories = config.directoriesForRepo(pr.repoName)
+        directories = config.directoriesForRepo(action.repoName)
 
-        with Runner(pr.cloneUrl, pr.branch, directories) as runner:
+        with Runner(action.cloneUrl, action.branch, directories) as runner:
 
             results = runner.run_tests()
 
             """ artifacts """
             facts = self.artifacts.collect(directories.artifacts)
-            self.artifacts.upload(bucket, "PR-%s" % pr.prnum, facts)
+            self.artifacts.upload(bucket, action.getKey(), facts)
 
             """ metrics """
             metrics = [results[k]["metrics"] for k in [k for k in results]]
             for metric in [item for sublist in metrics for item in sublist]:
                 metricService.put_metric(
-                    pr.cloneUrl,
-                    pr.prnum,
+                    action.cloneUrl,
+                    action.getKey(),
                     metric[0],
                     metric[1],
                     metric[2]
@@ -55,24 +55,22 @@ class Trousers:
 
             """ github comment """
 
-            if self.reporting == "github":
+            if self.reporting == "github" and action.hasPullRequest():
 
                 reporter = Reporter()
 
                 comment = reporter.compose_github_comment(
-                    pr.prnum,
+                    action.pullRequest.prNum,
                     facts,
                     results
                 )
 
                 self.github.update_comment(
-                    pr.commentUrl,
+                    action.pullRequest.commentUrl,
                     comment
                 )
 
-            logging.info()
-
-        logging.info("PR Build %s success" % pr.prnum)
+        logging.info("PR Build success")
 
     def start(self, queue, bucket, dynamo):
 
@@ -86,13 +84,13 @@ class Trousers:
 
         while True:
 
-            msg, pr = listener.receive(queue)
+            msg, action = listener.receive(queue)
 
             self.idle = False
             self.started = int(time.time())
 
             try:
-                self.process(pr, bucket, metrics)
+                self.process(action, bucket, metrics)
             except Exception as e:
                 logging.warning("PR Build failed.")
                 logging.error(str(e))

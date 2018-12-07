@@ -21,15 +21,26 @@ if __name__ == '__main__':
 
     print "Starting test run"
 
-    class MockMessage:
+    class MockPullRequestEvent:
         def __init__(self):
             self.body = open("data/gh_pull.mock").read()
         def delete(self):
             pass
 
+    class MockMasterEvent:
+        def __init__(self):
+            self.body = open("data/gh_master.mock").read()
+        def delete(self):
+            pass
+
     class MockQueue:
+        def __init__(self):
+            self.messages = [MockPullRequestEvent(), MockMasterEvent()]
         def receive_messages(self):
-            return [MockMessage()]
+            if len(self.messages) == 0:
+                return []
+            else:
+                return [self.messages.pop()]
 
     class MockBucket:
         def upload_file(self, localpath, key, ExtraArgs):

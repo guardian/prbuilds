@@ -1,21 +1,49 @@
 
-from .pullrequest import PullRequest
-import time
+import logging, time, json
 
-def pushes_only(pr):
-    return pr.action in ["opened", "synchronize"]
+from .pullrequest import PullRequest
+from .prbuildaction import PRBuildAction
+
+def pushes_only(action):
+    return action in ["opened", "synchronize"]
 
 class Listener:
 
-    def receive(self, queue, filt=pushes_only, interval=5):
+    def githubEventToAction(self, event):
+
+        if "pull_request" in event and pushes_only(event["action"]):
+            return PRBuildAction(
+                event["pull_request"]["head"]["ref"],
+                event["pull_request"]["head"]["repo"]["clone_url"],
+                event["pull_request"]["head"]["repo"]["name"],
+                PullRequest(
+                    event["pull_request"]["comments_url"],
+                    event["pull_request"]["number"]
+                )
+            )
+        elif "ref" in event and "master" in event["ref"]:
+            return PRBuildAction(
+                event["ref"],
+                event["repository"]["clone_url"],
+                event["repository"]["name"]
+            )
+        else:
+            raise Exception("Unknown message type")
+
+    def receive(self, queue, interval=5):
 
         """ Wait for an SQS message and then return it """
 
         while True:
+
             for message in queue.receive_messages():
-                pr = PullRequest(message.body)
-                if filt(pr):
-                    return (message, pr)
-                else:
+                try:
+                    action = self.githubEventToAction(json.loads(message.body))
+                    return (message, action)
+                except Exception as e:
+                    logging.warning("Discarded github event")
+                    logging.warning(e)
+                    logging.warning(message.body)
                     message.delete()
+
             time.sleep(interval)

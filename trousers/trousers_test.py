@@ -6,6 +6,7 @@ from trouserlib.trousers import Trousers
 from trouserlib.artifacts import ArtifactService
 from trouserlib.pullrequest import PullRequest
 from trouserlib.github import GitHubService
+from trouserlib.sqs import Listener
 
 class MockSubprocess:
     def call(self, args):
@@ -20,7 +21,7 @@ class MockResponse:
         pass
     def json(self):
             return json.loads(self.text)
-    
+
 class MockRequests:
     def __init__(self, mockResponse=MockResponse()):
         self.response = mockResponse
@@ -46,7 +47,7 @@ class MockBucket:
 class GitHubServiceTests(unittest.TestCase):
 
     """ does not talk to the real github """
-    
+
     def test_post_comment(self):
         s = GitHubService("PRBuilds", "token")
         r = MockRequests()
@@ -60,7 +61,7 @@ class GitHubServiceTests(unittest.TestCase):
         s.requests = MockRequests(
             MockResponse(200, open("data/gh_comment_api_response.json").read())
         )
-        
+
         self.assertTrue(
             s.has_comment(
                 "https://api.github.com/repos/guardian/frontend/issues/15499/comments"
@@ -72,7 +73,7 @@ class GitHubServiceTests(unittest.TestCase):
         s.requests = MockRequests(
             MockResponse(200, open("data/gh_comment_api_response.json").read())
         )
-        
+
         self.assertTrue(
             s.has_comment(
                 "https://api.github.com/repos/guardian/frontend/issues/15499/comments"
@@ -80,12 +81,12 @@ class GitHubServiceTests(unittest.TestCase):
         )
 
     def test_update_comment_when_one_exists(self):
-        
+
         s = GitHubService("PRBuilds", "token")
         s.requests = MockRequests(
             MockResponse(200, open("data/gh_comment_api_response.json").read())
         )
-        
+
         s.update_comment(
             "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
             "This is the body"
@@ -97,36 +98,47 @@ class GitHubServiceTests(unittest.TestCase):
         )
 
     def test_update_comment_when_none_exist(self):
-        
+
         s = GitHubService("Wooooow", "token")
         s.requests = MockRequests(
             MockResponse(200, open("data/gh_comment_api_response.json").read())
         )
-        
+
         s.update_comment(
             "https://api.github.com/repos/guardian/frontend/issues/15499/comments",
             "This is the body"
         )
 
-class PullRequestTests(unittest.TestCase):
 
-    """ does not talk to the real github """
-    
-    def test_fields(self):
-        mock = open("data/gh_pull.mock").read()
-        pull = PullRequest(mock)
-        self.assertEqual(pull.branch, "mock")
-        self.assertTrue("prbuildstub" in pull.cloneUrl)
-        self.assertTrue("prbuildstub" in pull.commentUrl)
-        self.assertEqual(pull.prnum, 2)
+class SQSTests(unittest.TestCase):
 
-        
+    def test_pull_request_event(self):
+        mock = json.loads(open("data/gh_pull.mock").read())
+        listener = Listener()
+        action = listener.githubEventToAction(mock)
+        self.assertTrue(action.hasPullRequest())
+        self.assertEqual(action.repoName, "prbuildstub")
+        self.assertEqual(action.cloneUrl, "https://github.com/MatthewJWalls/prbuildstub.git")
+        self.assertEqual(action.pullRequest.prNum, 2)
+        self.assertEqual(action.pullRequest.commentUrl, "https://api.github.com/repos/MatthewJWalls/prbuildstub/issues/1/comments")
+        self.assertEqual(action.getKey(), "PR-2")
+
+    def test_master_event(self):
+        mock = json.loads(open("data/gh_master.mock").read())
+        listener = Listener()
+        action = listener.githubEventToAction(mock)
+        self.assertFalse(action.hasPullRequest())
+        self.assertEqual(action.repoName, "prbuildstub")
+        self.assertEqual(action.cloneUrl, "https://github.com/MatthewJWalls/prbuildstub.git")
+        self.assertEqual(action.getKey(), "master")
+
+
 class ArtifactServiceTests(unittest.TestCase):
 
     def test_collect(self):
         a = ArtifactService()
         files = a.collect("./data")
-        self.assertEqual(len([x for x in files]), 2)
+        self.assertEqual(len([x for x in files]), 3)
 
     def test_content_type(self):
         a = ArtifactService()
@@ -135,7 +147,7 @@ class ArtifactServiceTests(unittest.TestCase):
         self.assertEqual(a.content_type("a.txt"), "text/plain")
         self.assertEqual(a.content_type("a"), "text/plain")
 
-        
+
 class TrousersTests(unittest.TestCase):
 
     def test_compose_github_comment(self):
@@ -143,11 +155,11 @@ class TrousersTests(unittest.TestCase):
         from trouserlib.trousers import Reporter
 
         r = Reporter()
-        
+
         msg = r.compose_github_comment("1",[
                 "/home/ubuntu/artifacts/screenshots/a.jpg",
                 "/home/ubuntu/artifacts/screenshots/b.jpg",
-                "/home/ubuntu/artifacts/thrown-exceptions.txt",            
+                "/home/ubuntu/artifacts/thrown-exceptions.txt",
                 "/home/ubuntu/artifacts/performanceComparisonSummary.txt"
             ],{
                 "screenshots": {"return code": 0, "raw_output": "picard"},
@@ -157,11 +169,11 @@ class TrousersTests(unittest.TestCase):
         )
 
         print msg
-        
+
         self.assertTrue("PR-1" in msg)
         self.assertTrue("screenshots/a.jpg" in msg)
         self.assertTrue("screenshots/b.jpg" in msg)
-        self.assertTrue("thrown-exceptions.txt" in msg)        
+        self.assertTrue("thrown-exceptions.txt" in msg)
         self.assertTrue("-automated message" in msg)
 
 
