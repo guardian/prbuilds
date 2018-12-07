@@ -11,4 +11,4 @@ class PRBuildAction:
         return self.pullRequest != None
 
     def getKey(self):
-        return "PR-%s" % self.pullRequest.prNum if self.hasPullRequest() else "master"
+        return "PR-%s" % self.pullRequest.prNum if self.hasPullRequest() else "%s-master" % self.repoName
