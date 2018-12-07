@@ -1,7 +1,7 @@
 import subprocess, modules, yaml, logging, os, shutil
 import traceback as tb
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 class Runner:
 
