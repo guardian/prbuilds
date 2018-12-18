@@ -1,11 +1,9 @@
 import subprocess, modules, yaml, logging, os, shutil
 import traceback as tb
 
-logging.basicConfig(level=logging.WARNING)
-
 class Runner:
 
-    def __init__(self, repo, branch, directories):
+    def __init__(self, repo, branch, directories, logger):
 
         """ constructor """
 
@@ -13,6 +11,7 @@ class Runner:
         self.repo = repo
         self.branch = branch
         self.directories = directories
+        self.logger = logger
 
         if os.path.isdir(self.directories.artifacts):
             shutil.rmtree(self.directories.artifacts)
@@ -28,7 +27,7 @@ class Runner:
 
         # full clone once
 
-        logging.info("Cloning into %s" % self.directories.workspace)
+        self.logger.info("Cloning into %s" % self.directories.workspace)
 
         if not os.path.exists(self.directories.workspace):
 
@@ -71,9 +70,9 @@ class Runner:
 
         """ return yaml configuration from the cloned repo """
 
-        location = "%s/.prbuilds/config.yml" % self.directories.workspace
+        location = os.path.join(self.directories.workspace, ".prbuilds/config.yml")
 
-        logging.info("Looking for configuration at %s" % location)
+        self.logger.info("Looking for configuration at %s" % location)
 
         try:
             return yaml.load(open(location).read())
@@ -84,7 +83,7 @@ class Runner:
 
         """ run tests against a running app """
 
-        logging.info("Running tests")
+        self.logger.info("Running tests")
 
         return modules.run_with_config(
             self.get_config()["checks"],
@@ -99,13 +98,20 @@ class Runner:
 
         conf = self.get_config()
 
-        ret = self.subprocess.call([
-            "ansible-playbook",
-            os.path.join(self.directories.workspace, conf["setup"]["ansible"]),
-            "--extra-vars",
-            "branch=%s clone_url=%s" % (self.branch, self.repo),
-            "-v"
-        ])
+        playbook = os.path.join(self.directories.workspace, conf["setup"]["ansible"])
+
+        self.logger.info("Running ansible playbook at %s" % playbook)
+
+        try:
+            ret = self.subprocess.call([
+                "ansible-playbook",
+                playbook,
+                "--extra-vars",
+                "branch=%s clone_url=%s workspace=%s" % (self.branch, self.repo, self.directories.workspace),
+                "-v"
+            ])
+        except:
+            raise Exception("Ansible threw an exception")
 
         if ret != 0:
             raise Exception("Ansible play did not exit zero")
@@ -125,6 +131,5 @@ class Runner:
         ])
 
         if traceback:
-            logging.error("PR Build failed")
-            logging.error(str(traceback))
-            logging.error(str(value))
+            self.logger.warning("Traceback was not falsy, it was in fact:")
+            tb.print_tb(traceback)

@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     class MockQueue:
         def __init__(self):
-            self.messages = [MockPullRequestEvent(), MockMasterEvent()]
+            self.messages = [MockMasterEvent()]
         def receive_messages(self):
             if len(self.messages) == 0:
                 return []
@@ -72,6 +72,10 @@ if __name__ == '__main__':
     m = Metrics(MockDynamo())
     m.init_tables()
     m.put_metric("a", 1, "b", "string", "ok")
+
+    os.environ["PRBUILDS_ROOT"] = os.path.join(os.getenv("HOME"), "prbuilds/")
+
+    print "PRBUILDS_ROOT set to %s" % os.getenv("PRBUILDS_ROOT")
 
     trousers.start(
         MockQueue(),
