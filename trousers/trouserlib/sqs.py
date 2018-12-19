@@ -23,7 +23,7 @@ class Listener:
             )
         elif "ref" in event and "master" in event["ref"]:
             return PRBuildAction(
-                event["ref"],
+                "master",
                 event["repository"]["clone_url"],
                 event["repository"]["name"]
             )
