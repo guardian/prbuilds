@@ -1,4 +1,5 @@
 import subprocess
+import time
 import os
 
 class LightHouseCheck:
@@ -15,7 +16,7 @@ class LightHouseCheck:
         out, err = ps.communicate()
 
         return ps.returncode
-    
+
     def install(self, directories):
 
         if self.run_with_nvm("lighthouse --version", directories) == 0:
@@ -25,7 +26,7 @@ class LightHouseCheck:
 
         if self.run_with_nvm("lighthouse --version", directories) != 0:
             raise Exception("Unable to install lighthouse")
-            
+
     def run(self, directories, params):
 
         """ run lighthouse """
@@ -34,11 +35,11 @@ class LightHouseCheck:
 
         pth = os.path.join(
             directories.artifacts,
-            "lighthouse.html"
+            "%s.html" % int(time.time())
         )
-        
+
         ret = self.run_with_nvm(
-            "lighthouse --chrome-flags='--headless --no-sandbox' --output-path=%s %s" % (pth, params["url"]),
+            "lighthouse --chrome-flags='--headless --no-sandbox' --output=json --output=html --save-assets --output-path=%s %s" % (pth, params["url"]),
             directories
         )
 
@@ -62,4 +63,3 @@ if __name__ == "__main__":
         DirectoriesMock(),
         {"url" : "https://theguardian.co.uk"}
     )
-
