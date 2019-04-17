@@ -83,8 +83,8 @@ To run the built image:
     -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
     -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
     -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
-    -e GH_NAME=MatthewJWalls \
-    -e GH_TOKEN=<github token> \
+    -e GH_NAME=NOONE \
+    -e GH_TOKEN=NOTHING \
     -e QUEUE_NAME=trousers_test \
     prbuilds
 
