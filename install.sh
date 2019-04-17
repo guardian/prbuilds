@@ -34,6 +34,13 @@ sudo apt-get update
 
 sudo apt-get install -y python-dev libffi-dev libssl-dev build-essential apache2-utils software-properties-common chromium-browser
 
+# make sure chrome installed properly
+
+if [[ "$(which chromium-browser)" == "" ]]; then
+    echo "Failed to install chromium-browser"
+    exit 1
+fi
+
 # use easy install to get pip instead of apt-get so we get
 # a recent version instead of whatever ubuntu has
 
@@ -70,10 +77,11 @@ cd $parent/trousers
 
 if [[ "$1" == "-test" ]]; then
     screen -d -L -m python full_test.py
-    echo "Running prbuilds in test-mode"
+    echo "Running prbuilds in test-mode."
 else
     screen -d -L -m python trousers.py
     echo "Blocking until killed"    
 fi
 
-bash
+tail -f screenlog.0
+
