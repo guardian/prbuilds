@@ -6,6 +6,7 @@ from .a11yvalidation import A11YValidation
 from .loadtest import LoadTestCheck
 from .microdatacheck import MicroDataCheck
 from .lighthouse import LightHouseCheck
+from .selftest import SelfTest
 
 allChecks = {
     "screenshots"  : ScreenshotsCheck(),
@@ -14,36 +15,39 @@ allChecks = {
     "a11yvalidation": A11YValidation(),
     "loadtest": LoadTestCheck(),
     "microdata": MicroDataCheck(),
-    "lighthouse": LightHouseCheck()
+    "lighthouse": LightHouseCheck(),
+    "selftest": SelfTest(),
 }
 
-def run_test(name, directories, params):
+def run_test(name, directories, params, logger):
     try:
-        print "Running %s" % name
-        return allChecks[name].run(
+        ret = allChecks[name].run(
             directories,
             params
         )
+        logger.info("Check %s [SUCCESS]" % name)
+        return ret
     except Exception as e:
-        print "Failed to run check: %s" % name
-        print e
+        logger.info("Check %s [FAILED]" % name)
+        logger.info(e)
         return None
 
-def run_with_config(chkConfig, directories):
+def run_with_config(chkConfig, directories, logger):
 
     results = {}
 
     directories.check()
 
     for k, v in chkConfig.items():
-        if k in allChecks.keys():
+        if k in allChecks.keys(): 
             res = run_test(
                 k,
                 directories,
-                v
+                v,
+                logger
             )
-
             if res is not None:
                 results[k] = res
+
 
     return results

@@ -15,7 +15,7 @@ class Directories:
         assert path.isdir(self.root)
         assert path.isdir(self.workspaceRoot)
         assert path.isdir(self.artifacts)
-        assert path.isdir(self.builtins)
+        #assert path.isdir(self.builtins)
 
 def directoriesForRepo(repoName):
     root = os.getenv("PRBUILDS_ROOT", DEFAULT_ROOT)

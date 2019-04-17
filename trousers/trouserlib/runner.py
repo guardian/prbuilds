@@ -87,7 +87,8 @@ class Runner:
 
         return modules.run_with_config(
             self.get_config()["checks"],
-            self.directories
+            self.directories,
+            self.logger
         )
 
     def __enter__(self):
