@@ -83,5 +83,8 @@ else
     echo "Blocking until killed"    
 fi
 
+sleep 5
+echo "$(pwd)"
 tail -f screenlog.0
+bash
 
