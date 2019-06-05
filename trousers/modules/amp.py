@@ -30,6 +30,13 @@ class AmpCheck:
             }
         )
 
+        open(
+            os.path.join(
+                directories.artifacts,
+                "amp-report.txt"
+            ),"w"
+        ).write(response.content)
+
         return {
             "return_code": response.status_code,
             "raw_output": response.content,

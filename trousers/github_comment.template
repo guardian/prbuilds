@@ -22,6 +22,11 @@ PRbuilds results:
 {{ " • ".join(links_for("a11y-report")) }}
 {% endif %}
 
+{% if "amp" in results %}
+{% if results["amp"]["raw_output"].count("false") == 0 %}&#x1F49A;{% else %}&#x1F525; (failed) {% endif %} **AMP validation**
+{{ " • ".join(links_for("amp-report.html")) }}
+{% endif %}
+
 {% if "microdata" in results %}
 {% if results["microdata"]["raw_output"].count("invalid") == 0 %}&#x1F49A;{% else %}&#x1F525; (invalid) {% endif %} **Microdata Validation**
 {{ " • ".join(links_for("microdata")) }}
@@ -36,6 +41,5 @@ PRbuilds results:
 **LightHouse Reporting**
 {{ " • ".join(links_for("report.html")) }}
 {% endif %}
-
 
 --automated message
