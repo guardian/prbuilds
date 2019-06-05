@@ -37,7 +37,7 @@ class MicroDataCheck:
                     validate(test, schema)
                     results += "  valid %s\n" % typ
                 except Exception as e:
-                    results += "invalid %s (%s)\n" % (typ, e.message)
+                    results += "invalid %s (%s)\n" % (typ, e)
                     
             else:
                 results += "ignored %s\n" % typ
@@ -70,7 +70,7 @@ class MicroDataCheck:
 
         failures = results.count("invalid")
 
-        print results
+        print(results)
         
         return {
             "return_code": 0 if failures == 0 else 1,
