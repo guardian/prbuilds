@@ -6,6 +6,7 @@ from .a11yvalidation import A11YValidation
 from .loadtest import LoadTestCheck
 from .microdatacheck import MicroDataCheck
 from .lighthouse import LightHouseCheck
+from .amp import AmpCheck
 from .selftest import SelfTest
 
 allChecks = {
@@ -16,6 +17,7 @@ allChecks = {
     "loadtest": LoadTestCheck(),
     "microdata": MicroDataCheck(),
     "lighthouse": LightHouseCheck(),
+    "amp": AmpCheck(),
     "selftest": SelfTest(),
 }
 
