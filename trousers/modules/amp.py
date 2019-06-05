@@ -1,5 +1,6 @@
 
 import requests
+import os
 
 class AmpCheck:
 
