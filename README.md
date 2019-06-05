@@ -57,14 +57,15 @@ cloudformation files are provided if you want to run your own stack
 
 PRBuilds supports the following checks to be ran against the app under test
 
-|Config file name|Config file params|Desc                                |
-|----------------|------------------|------------------------------------|
-| screenshots    | url              | take a screenshot                  |
-| exceptions     | url              | record javascript exceptions       |
-| webpagetest    | url              | run webpagetest tool               |
-| loadtest       | url              | run apache benchmark               |
-| microdata      | url              | validate microdata structured data |
-| a11yvalidation | url              | run a11y accessibility check       |
+|Config file name|Config file params|Desc                                    |
+|----------------|------------------|----------------------------------------|
+| screenshots    | url              | take a screenshot                      |
+| exceptions     | url              | record javascript exceptions DEPRECATED|
+| webpagetest    | url              | run webpagetest tool DEPRECATED        |
+| loadtest       | url              | run apache benchmark                   |
+| microdata      | url              | validate microdata structured data     |
+| a11yvalidation | url              | run a11y accessibility check           |
+| amp            | url              | run AMP validation check               |
 
 
 ## Using Docker to test PRBuilds
