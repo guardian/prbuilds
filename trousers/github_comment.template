@@ -24,7 +24,7 @@ PRbuilds results:
 
 {% if "amp" in results %}
 {% if results["amp"]["raw_output"].count("false") == 0 %}&#x1F49A;{% else %}&#x1F525; (failed) {% endif %} **AMP validation**
-{{ " • ".join(links_for("amp-report.html")) }}
+{{ " • ".join(links_for("amp-report.txt")) }}
 {% endif %}
 
 {% if "microdata" in results %}
