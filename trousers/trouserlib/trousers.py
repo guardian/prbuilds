@@ -1,5 +1,5 @@
 
-import traceback, logging, time, config, boto3
+import traceback, logging, time, config
 
 from .runner import Runner
 from .reporter import Reporter
@@ -8,7 +8,6 @@ from .github import GitHubService
 from .artifacts import ArtifactService
 from .monitoring import MonitoringService
 from .metrics import Metrics
-from .logger import CloudWatchLoggingHandler
 
 logger = logging.getLogger("buildlog")
 
