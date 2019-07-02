@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import boto3, os, sys, logging
-
+import boto3, os, sys
 from trouserlib.trousers import Trousers
-from trouserlib.logger import CloudWatchLoggingHandler
 
 GH_NAME = os.getenv('GH_NAME', '')
 GH_TOKEN = os.getenv('GH_TOKEN', '')
@@ -32,14 +30,6 @@ if __name__ == '__main__':
     sqs = session.resource('sqs')
     dyn = session.resource('dynamodb')
     s3  = session.resource('s3')
-    cwl = session.resource('logs')
-
-    # configure logging
-
-    logger = logging.getLogger("buildlog")
-    logger.addHandler(logging.FileHandler("buildlog.log"))
-    logger.addHandler(CloudWatchLoggingHandler(cwl, "prbuilds", "buildlog"))
-    logger.setLevel(logging.INFO)
 
     # launch trousers
 
