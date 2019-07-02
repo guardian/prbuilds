@@ -32,7 +32,7 @@ if __name__ == '__main__':
     sqs = session.resource('sqs')
     dyn = session.resource('dynamodb')
     s3  = session.resource('s3')
-    cwl = session.resource('logs')
+    cwl = session.client('logs')
 
     # configure logging
 
