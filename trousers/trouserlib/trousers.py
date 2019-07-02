@@ -10,7 +10,6 @@ from .monitoring import MonitoringService
 from .metrics import Metrics
 
 logger = logging.getLogger("buildlog")
-logger.setLevel(logging.INFO)
 
 class Trousers:
 
