@@ -58,6 +58,5 @@ if __name__ == '__main__':
         s3.Bucket(
             BUCKET_NAME
         ),
-        dyn,
-        cwl
+        dyn
     )
