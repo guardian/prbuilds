@@ -17,21 +17,9 @@ class LightHouseCheck:
 
         return ps.returncode
 
-    def install(self, directories):
-
-        if self.run_with_nvm("lighthouse --version", directories) == 0:
-            return
-
-        self.run_with_nvm("npm install -g lighthouse", directories)
-
-        if self.run_with_nvm("lighthouse --version", directories) != 0:
-            raise Exception("Unable to install lighthouse")
-
     def run(self, directories, params):
 
         """ run lighthouse """
-
-        self.install(directories)
 
         pth = os.path.join(
             directories.artifacts,
