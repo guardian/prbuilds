@@ -21,6 +21,8 @@ def directoriesForRepo(repoName):
     root = os.getenv("PRBUILDS_ROOT", DEFAULT_ROOT)
     return Directories(root, repoName)
 
+prbuildsRoot = os.getenv("PRBUILDS_ROOT", DEFAULT_ROOT)
 healthcheckEndpoint = "/healthcheck"
 healthcheckPort = 9002
 maxBuildTimeSeconds = 40*60
+requiredFreeSpaceMB = 500

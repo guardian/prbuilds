@@ -3,7 +3,7 @@ import threading, logging, multiprocessing, time
 import config
 from flask import Flask, abort
 
-logger = logging.getLogger("monitor")
+logger = logging.getLogger("buildlog")
 
 app = Flask(__name__)
 
@@ -13,15 +13,17 @@ class MonitoringService:
         self.target = None
 
     def healthcheck(self):
-        if self.target.is_unhealthy():
-            abort(500)
-        return ":)"
-
+        if self.target.is_healthy():
+            return ":)"
+        else:
+            logger.info("Healthcheck returning unhealthy")
+            return abort(500)
+        
     def start(self):
 
         """ Worker thread to start the web server """
 
-        logger.info("Starting monitor on //localhost:%s/healthcheck" % config.healthcheckPort)
+        logger.info("Starting health monitor on //localhost:%s/healthcheck" % config.healthcheckPort)
 
         app.add_url_rule(
             config.healthcheckEndpoint,

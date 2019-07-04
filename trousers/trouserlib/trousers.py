@@ -1,5 +1,5 @@
 
-import traceback, logging, time, config
+import os, traceback, logging, time, config
 
 from .runner import Runner
 from .reporter import Reporter
@@ -24,11 +24,17 @@ class Trousers:
         self.idle = True
         self.started = 0
 
-    def is_unhealthy(self):
+    def is_healthy(self):
 
-        """ unhealthy if a build is running after n minutes """
+        """ we are healthy under these conditions """
 
-        return not self.idle and int(time.time()) - self.started > config.maxBuildTimeSeconds
+        s = os.statvfs(config.prbuildsRoot)
+        freeSpaceMB = (((s.f_frsize * s.f_bavail) / 1000) / 1000)
+
+        hasFreeSpace = freeSpaceMB > config.requiredFreeSpaceMB
+        hasNotBeenRunningForAges = self.idle or int(time.time()) - self.started < config.maxBuildTimeSeconds
+
+        return hasFreeSpace and hasNotBeenRunningForAges
 
     def process(self, action, bucket, metricService):
 
@@ -90,6 +96,10 @@ class Trousers:
 
         self.monitoring.monitor(self)
         metrics.init_tables()
+
+        if not self.is_healthy():
+            logger.error("PRBuilds was unhealthy at startup. Not proceeding")
+            raise Exception("PRBuilds was unhealthy at startup")
 
         while True:
 
