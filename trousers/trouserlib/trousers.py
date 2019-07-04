@@ -31,10 +31,15 @@ class Trousers:
         s = os.statvfs(config.prbuildsRoot)
         freeSpaceMB = (((s.f_frsize * s.f_bavail) / 1000) / 1000)
 
-        hasFreeSpace = freeSpaceMB > config.requiredFreeSpaceMB
-        hasNotBeenRunningForAges = self.idle or int(time.time()) - self.started < config.maxBuildTimeSeconds
+        health = {
+            "has free space": freeSpaceMB > config.requiredFreeSpaceMB,
+            "no long running build": self.idle or int(time.time()) - self.started < config.maxBuildTimeSeconds
+        }
 
-        return hasFreeSpace and hasNotBeenRunningForAges
+        for k in {k for k, v in health.items() if not v}:
+            logger.warning("check failed: %s" % k)
+
+        return False not in health.values()
 
     def process(self, action, bucket, metricService):
 

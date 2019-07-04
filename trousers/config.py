@@ -25,4 +25,4 @@ prbuildsRoot = os.getenv("PRBUILDS_ROOT", DEFAULT_ROOT)
 healthcheckEndpoint = "/healthcheck"
 healthcheckPort = 9002
 maxBuildTimeSeconds = 40*60
-requiredFreeSpaceMB = 500
+requiredFreeSpaceMB = 200
