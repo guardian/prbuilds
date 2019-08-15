@@ -20,31 +20,47 @@ class AmpCheck:
 
         return response.content
 
-    def run(self, directories, params):
-
+    def check_page(self, url):
         response = requests.post(
             self.API, 
             json={ 
                 "htmlStrings":[ 
-                    self.get_local_html(params["url"])
+                    self.get_local_html(url)
                 ]
             }
         )
+        return response.content
 
-        open(
-            os.path.join(
-                directories.artifacts,
-                "amp-report.txt"
-            ),"w"
-        ).write(response.content)
+    def run(self, directories, params):
 
-        return {
-            "return_code": response.status_code,
-            "raw_output": response.content,
-            "metrics": [
-                ("failed_endpoints", "number", response.content.count("false"))
-            ]
-        }
+        reportPath = os.path.join(
+            directories.artifacts,
+            "amp-report.txt"
+        )
+
+        def write_to_report(url, result):
+            open(reportPath ,"a").write("\nFor page %s:\n%s\n" % (url, result))
+        
+        if 'url' in params:
+            write_to_report(params["url"], self.check_page(params["url"]))
+        elif 'urls' in params:
+            for url in params["urls"]:
+                write_to_report(url, self.check_page(url))
+
+        with open(os.path.join(directories.artifacts, "amp-report.txt"), 'r') as f:
+
+            report = f.read()
+
+            print("Final content was: %s" % report)            
+            
+            return {
+                "return_code": 200 if report.count("false") == 0 else 500,
+                "raw_output": report,
+                "metrics": [
+                    ("failed_endpoints", "number", report.count("false"))
+                ]
+            }
+
 
 if __name__ == "__main__":
 
@@ -55,6 +71,13 @@ if __name__ == "__main__":
         workspace = "./"
 
     ac = AmpCheck()
+
+    result = ac.run(
+        DirectoriesMock(),
+        { "urls" : ["https://www.theguardian.com/money/2017/mar/10/ministers-to-criminalise-use-of-ticket-tout-harvesting-software", "https://amp.theguardian.com/money/2017/mar/10/ministers-to-criminalise-use-of-ticket-tout-harvesting-software"] }
+    )
+
+    print(result)
 
     result = ac.run(
         DirectoriesMock(),
