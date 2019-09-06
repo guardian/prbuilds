@@ -1,6 +1,7 @@
 
 import requests
 import os
+import json
 
 class AmpCheck:
 
@@ -39,7 +40,8 @@ class AmpCheck:
         )
 
         def write_to_report(url, result):
-            open(reportPath ,"a").write("\nFor page %s:\n%s\n" % (url, result))
+            prettyJson = json.dumps(json.loads(result), indent = 2, sort_keys=False)
+            open(reportPath ,"a").write("\nFor page %s:\n%s\n" % (url, prettyJson))
         
         if 'url' in params:
             write_to_report(params["url"], self.check_page(params["url"]))
