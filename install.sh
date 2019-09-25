@@ -41,6 +41,8 @@ if [[ "$(which chromium-browser)" == "" ]]; then
     exit 1
 fi
 
+npm install -g lighthouse
+
 # use easy install to get pip instead of apt-get so we get
 # a recent version instead of whatever ubuntu has
 
