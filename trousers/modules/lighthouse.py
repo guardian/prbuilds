@@ -52,36 +52,19 @@ class LightHouseCheck:
             "%s.html" % int(time.time())
         )
 
-        print("Checking for NVM...")
+        print("Nvm not present, running directly")
 
-        if self.nvm_is_absent:
+        ret = self.run_without_nvm(
+            "lighthouse --chrome-flags='--headless --no-sandbox' --output=json --output=html --save-assets --output-path=%s %s" % (pth, params["url"]),
+            directories
+        )
 
-            print("Nvm not present, running directly")
-
-            ret = self.run_without_nvm(
-                "lighthouse --chrome-flags='--headless --no-sandbox' --output=json --output=html --save-assets --output-path=%s %s" % (pth, params["url"]),
-                directories
-            )
-
-            return {
-                "return_code": ret,
-                "raw_output": "mock, changeme",
-                "metrics": []
-            }
+        return {
+            "return_code": ret,
+            "raw_output": "mock, changeme",
+            "metrics": []
+        }
             
-        else:
-
-            ret = self.run_with_nvm(
-                "lighthouse --chrome-flags='--headless --no-sandbox' --output=json --output=html --save-assets --output-path=%s %s" % (pth, params["url"]),
-                directories
-            )
-            
-
-            return {
-                "return_code": ret,
-                "raw_output": "mock, changeme",
-                "metrics": []
-            }
 
 if __name__ == "__main__":
 

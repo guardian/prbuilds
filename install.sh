@@ -41,7 +41,23 @@ if [[ "$(which chromium-browser)" == "" ]]; then
     exit 1
 fi
 
-npm install -g lighthouse
+
+# get a default version of node and npm and lighthouse
+
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+if [[ "$(which npm)" == "" ]]; then
+    echo "Failed to install npm"
+    exit 1
+fi
+
+sudo npm install -g lighthouse
+
+if [[ "$?" != "0" ]]; then
+    echo "Failed to install lighthouse"
+    exit 1
+fi
 
 # use easy install to get pip instead of apt-get so we get
 # a recent version instead of whatever ubuntu has
