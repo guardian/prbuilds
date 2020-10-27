@@ -4,7 +4,7 @@ boto3==1.4.2
 botocore==1.4.84
 cffi==1.9.1
 click==6.6
-cryptography==1.6
+cryptography==3.2
 docutils==0.12
 enum34==1.1.6
 Flask==0.11.1
